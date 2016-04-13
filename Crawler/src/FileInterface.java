@@ -10,7 +10,9 @@ public class FileInterface extends JFrame implements ActionListener{
 
     private final JFileChooser fc = new JFileChooser();
 
+    //Textfield to display user's selected filepath
     private JTextField tf;
+
     private JButton open, ok;
 
     FileInterface(){
