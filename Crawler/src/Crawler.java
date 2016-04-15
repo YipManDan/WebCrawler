@@ -2,7 +2,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import javax.swing.text.Document;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -29,8 +28,9 @@ public class Crawler {
      * @since   2016-04-13
      */
     class Spider implements Runnable {
-        int spiderID;
-        Thread spiderThread;
+        public int spiderID;
+        public Thread spiderThread;
+        public int sleepTime = 3000;
 
         Spider(int ID) {
             spiderID = ID;
@@ -46,30 +46,51 @@ public class Crawler {
          */
         @Override
         public void run() {
-            URL url;
+            URL urlToCrawl;
             System.out.println("Spider " + spiderID + " is crawling.");
 
+            boolean hasSlept = false;
+
             while (numPagesCrawled.val() < numberOfPagesToCrawl()) {
-                // Put main body of spider functionality here.
-
                 //Get URL to crawl from queue
-                url = URLs_to_crawl.poll();
+                urlToCrawl = URLs_to_crawl.poll();
 
+                // If the queue was empty, either kill self or sleep.
+                if (urlToCrawl == null) {
+                    if (numberOfSpiders == 1 || hasSlept)
+                        break;
+                    else
+                    {
+                        hasSlept = true;
+                        try { Thread.sleep(sleepTime); }
+                        catch (InterruptedException e) {
+                            System.err.println("InterruptException when Spider "+spiderID+" was sleeping.");
+                        }
+                        continue;
+                    }
+                }
+
+                hasSlept = false;
 
                 //Open document
                 try {
-                    org.jsoup.nodes.Document doc = Jsoup.connect(url.toString()).get();
+                    org.jsoup.nodes.Document doc = Jsoup.connect(urlToCrawl.toString()).get();
 
                     //Output title of the page
                     String title = doc.title();
-                    System.out.println("Spider " + spiderID + "downloaded: " + title);
+                    System.out.println("Spider " + spiderID + " downloaded: " + title);
 
                     //Elements links = doc.select("a[href]");
                     Elements links = doc.select("a");
 
                     for(Element link: links) {
-                        System.out.println("link: " + link.attr("abs:href"));
+                        String linkString = link.attr("abs:href");
+                        URL urlToQueue = new URL(linkString);
+                        URLs_to_crawl.add(urlToQueue);
+                        System.out.println("link: " + linkString);
                     }
+
+                    numPagesCrawled.increment();
                 }
                 catch (IOException e){
                     System.err.println("Spider " + spiderID + ": " + e.getMessage());
@@ -116,7 +137,7 @@ public class Crawler {
         // Parse the CSV file.
 //        csvParser = new CSV_Parser();
 //        csvParser.parseFile(fileInterface.getFileChosen());
-        csvParser = new CSV_Parser("http://www.thesketchfellows.com/",1);
+        csvParser = new CSV_Parser("http://www.thesketchfellows.com/",5);
 
         // Add the seed URL to the list of URLs that need crawling.
         URLs_to_crawl.add(seedURL());
