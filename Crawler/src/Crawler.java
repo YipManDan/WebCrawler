@@ -72,13 +72,17 @@ public class Crawler {
 
                 hasSlept = false;
 
+                // Check if the URL to crawl has already been crawled.
+                if (URLs_crawled.contains(urlToCrawl))
+                    continue;
+
                 //Open document
                 try {
                     org.jsoup.nodes.Document doc = Jsoup.connect(urlToCrawl.toString()).get();
 
                     //Output title of the page
                     String title = doc.title();
-                    System.out.println("Spider " + spiderID + " downloaded: " + title);
+                    System.out.println("Spider " + spiderID + " downloaded: " + urlToCrawl);
 
                     //Elements links = doc.select("a[href]");
                     Elements links = doc.select("a");
@@ -91,6 +95,7 @@ public class Crawler {
                     }
 
                     numPagesCrawled.increment();
+                    URLs_crawled.add(urlToCrawl);
                 }
                 catch (IOException e){
                     System.err.println("Spider " + spiderID + ": " + e.getMessage());
