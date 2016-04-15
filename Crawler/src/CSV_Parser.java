@@ -18,6 +18,21 @@ public class CSV_Parser {
     public int numberOfPagesToCrawl;
     public URL URLRestriction;
 
+    // Default constructor does nothing.
+    CSV_Parser() {}
+
+    CSV_Parser(URL seedURL, int numPages, URL URLRestriction) {
+        this.seedURL = seedURL;
+        this.numberOfPagesToCrawl = numPages;
+        this.URLRestriction = URLRestriction;
+    }
+
+    CSV_Parser(String seedURL, int numPages, String URLRestriction) {
+        this.seedURL = new URL(seedURL);
+        this.numberOfPagesToCrawl = numPages;
+        this.URLRestriction = new URL(URLRestriction);
+    }
+
     public void parseFile(File inputFile) {
         try {
             Scanner csvScanner = new Scanner(inputFile);
