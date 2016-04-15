@@ -23,10 +23,29 @@ public class Crawler {
         int spiderID;
         Thread spiderThread;
 
-
-        Spider() {
-
+        Spider(int ID) {
+            spiderID = ID;
+            spiderThread = new Thread(this, "Spider Thread " + String.valueOf(spiderID));
         };
+
+        public void crawl() {
+            spiderThread.start();
+        }
+
+        /**
+         * The main functionalty of the Spider goes here.
+         */
+        @Override
+        public void run() {
+            System.out.println("Spider " + spiderID + " is crawling.");
+
+            while (numPagesCrawled.val() < csvParser.numberOfPagesToCrawl) {
+                // Put main body of spider functionality here.
+            }
+
+            System.out.println("Spider " + spiderID + " has stopped crawling.");
+            return;
+        }
     }
 
     /* ---------- Start Cralwer stuff here. ---------- */
