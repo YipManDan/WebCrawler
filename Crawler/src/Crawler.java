@@ -138,7 +138,6 @@ public class Crawler {
     protected File csvFile;
     protected int numberOfSpiders = 1;
     //    protected int numberOfQueues;
-    private URL seedURL;
     private ThreadSafeInt numPagesCrawled;
     private Set<String> recentlyAccessedURLs;  // For the URLs that should not be crawled again yet.
     private Queue<URL> URLs_to_crawl;       // For the URLs scraped and queued but not yet crawled
