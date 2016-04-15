@@ -14,9 +14,9 @@ import java.util.Scanner;
  * @since   2016-04-06
  */
 public class CSV_Parser {
-    public URL seedURL = "";
-    public int numberOfPagesToCrawl = -1;
-    public URL URLRestriction = "";
+    public URL seedURL;
+    public int numberOfPagesToCrawl;
+    public URL URLRestriction;
 
     public void parseFile(File inputFile) {
         try {
