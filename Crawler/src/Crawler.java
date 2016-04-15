@@ -106,7 +106,7 @@ public class Crawler {
         URLs_to_crawl = new ConcurrentLinkedQueue<URL>();
         URLs_crawled = new ConcurrentSkipListSet<URL>();
 
-        new FileInterface(this);
+        fileInterface = new FileInterface(this);
     }
 
     public void startCrawl() {
