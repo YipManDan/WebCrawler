@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
  * @since   2016-04-13
  */
 public class Crawler {
+
     // Data
     private ThreadSafeInt numPagesCrawled;
     private Set<URL> recentlyAccessedURLs;  // For the URLs that should not be crawled again yet.
