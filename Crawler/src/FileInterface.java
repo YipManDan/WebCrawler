@@ -89,24 +89,4 @@ public class FileInterface extends JFrame implements ActionListener{
         return fileChooser.getSelectedFile();
     }
 
-//    /**
-//     * Called to find out how many spiders the user wishes to use in the crawl.
-//     * @return An integer for the number of spiders to use in the crawl.
-//     */
-//    public int getNumberOfSpiders() {
-//        return numberOfSpiders;
-//    }
-//
-//    /**
-//     * Called to find out how many queues the user wishes to use for the crawl.
-//     * @return An integer for the number of queues to be used.
-//     */
-//    public int getNumberOfQueues() {
-//        return numberOfQueues;
-//    }
-
-    public static void main(String[] args){
-        new FileInterface(null);
-    }
-
 }

@@ -21,6 +21,23 @@ public class CSV_Parser {
     // Default constructor does nothing.
     CSV_Parser() {}
 
+    CSV_Parser(URL seedURL, int numPages) {
+        this.seedURL = seedURL;
+        this.numberOfPagesToCrawl = numPages;
+        this.URLRestriction = null;
+    }
+
+    CSV_Parser(String seedURL, int numPages) {
+        this.numberOfPagesToCrawl = numPages;
+        this.URLRestriction = null;
+        try{
+            this.seedURL = new URL(seedURL);
+        } catch (MalformedURLException e) {
+            System.out.println("MalformedURLException in CSV_Parser constructor.");
+            e.printStackTrace();
+        }
+    }
+
     CSV_Parser(URL seedURL, int numPages, URL URLRestriction) {
         this.seedURL = seedURL;
         this.numberOfPagesToCrawl = numPages;

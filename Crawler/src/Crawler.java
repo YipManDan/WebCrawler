@@ -6,6 +6,8 @@ import javax.swing.text.Document;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -85,8 +87,8 @@ public class Crawler {
 
     // Data
     protected File csvFile;
-//    protected int numberOfSpiders;
-//    protected int numberOfQueues;
+    protected int numberOfSpiders = 1;
+    //    protected int numberOfQueues;
     private URL seedURL;
     private ThreadSafeInt numPagesCrawled;
     private Set<URL> recentlyAccessedURLs;  // For the URLs that should not be crawled again yet.
@@ -96,6 +98,7 @@ public class Crawler {
     // Contained Classes
     private FileInterface fileInterface;
     private CSV_Parser csvParser;
+    private List<Spider> spiders;
 
     Crawler () {
         numPagesCrawled = new ThreadSafeInt(0);
@@ -111,13 +114,20 @@ public class Crawler {
         if (fileInterface != null) fileInterface.dispose();
 
         // Parse the CSV file.
-        csvParser = new CSV_Parser();
-        csvParser.parseFile(fileInterface.getFileChosen());
+//        csvParser = new CSV_Parser();
+//        csvParser.parseFile(fileInterface.getFileChosen());
+        csvParser = new CSV_Parser("http://www.thesketchfellows.com/",1);
 
         // Add the seed URL to the list of URLs that need crawling.
         URLs_to_crawl.add(seedURL());
 
+        spiders = new ArrayList<Spider>();
         // Create Spiders and make them run.
+        for (int i = 0; i < numberOfSpiders; i++) {
+            Spider spider = new Spider(i);
+            spiders.add(spider);
+            spider.crawl();
+        }
 
         // Do stuff with what the spiders gathered.
     }
@@ -133,5 +143,9 @@ public class Crawler {
     }
     private URL URLRestriction() {
         return csvParser.URLRestriction;
+    }
+
+    public static void main(String[] args){
+        new Crawler();
     }
 }
