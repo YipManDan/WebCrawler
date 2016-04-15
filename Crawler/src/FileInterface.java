@@ -14,12 +14,13 @@ import java.io.File;
 public class FileInterface extends JFrame implements ActionListener{
     //Data
     private final JFileChooser fileChooser = new JFileChooser();
+    private final JFileChooser pathChooser = new JFileChooser();
     private Crawler crawler;
 
     //Textfield to display user's selected filepath
-    private JTextField textField;
+    private JTextField specFile, outputPath;
 
-    private JButton openButton, okButton;
+    private JButton openButton, selectButton, okButton;
 
     /**
      * A constructor for the FileInterface class.
@@ -29,23 +30,35 @@ public class FileInterface extends JFrame implements ActionListener{
 
         this.crawler = crawler;
 
+        pathChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
         JPanel north, south;
 
         //North panel contains text field displaying selected file path
-        north = new JPanel(new GridLayout(1,1));
-        textField = new JTextField();
-        textField.setText("Select a file: ");
-        textField.setEditable(false);
-        textField.setBackground(Color.white);
-        north .add(textField);
+        north = new JPanel(new GridLayout(2,1));
+
+        specFile = new JTextField();
+        specFile.setText("Select a file: ");
+        specFile.setEditable(false);
+        specFile.setBackground(Color.white);
+        north.add(specFile);
+
+        outputPath = new JTextField("Select an output path: ");
+        outputPath.setEditable(false);
+        outputPath.setBackground(Color.white);
+        north.add(outputPath);
+
 
         //South panel contains select and confirm button
         south = new JPanel();
-        openButton = new JButton("Select a File");
+        openButton = new JButton("Specification File");
         openButton.addActionListener(this);
+        selectButton = new JButton("Output Path");
+        selectButton.addActionListener(this);
         okButton = new JButton("OK");
         okButton.addActionListener(this);
         south.add(openButton);
+        south.add(selectButton);
         south.add(okButton);
 
         add(north, BorderLayout.NORTH);
@@ -65,7 +78,14 @@ public class FileInterface extends JFrame implements ActionListener{
             int returnVal = fileChooser.showOpenDialog(this);
             if(returnVal == JFileChooser.CANCEL_OPTION)
                 return;
-            textField.setText(fileChooser.getSelectedFile().getAbsolutePath());
+            specFile.setText(fileChooser.getSelectedFile().getAbsolutePath());
+            return;
+        }
+        if(o == selectButton){
+            int returnVal = pathChooser.showOpenDialog(this);
+            if(returnVal == JFileChooser.CANCEL_OPTION)
+                return;
+            outputPath.setText(pathChooser.getSelectedFile().getAbsolutePath());
             return;
         }
         if(o == okButton) {
