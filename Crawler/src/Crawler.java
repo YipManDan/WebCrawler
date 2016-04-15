@@ -6,10 +6,7 @@ import org.jsoup.select.Elements;
 
 import java.io.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -101,6 +98,10 @@ public class Crawler {
 
                     URLs_crawled.add(urlToCrawl.toString());
                     numPagesCrawled.increment();
+
+                    /* Need to add top level of URL to list of top levels not to be
+                     * queried and make a Timer to remove the URL at a later time.
+                     */
 
                     // Figure out a name for the file.
                     String filename = title.toString()+".html";
