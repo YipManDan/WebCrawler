@@ -3,7 +3,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.safety.Cleaner;
 import org.jsoup.safety.Whitelist;
 import org.jsoup.select.Elements;
-import sun.net.www.protocol.file.FileURLConnection;
 
 import java.io.*;
 import java.net.URL;
@@ -102,8 +101,17 @@ public class Crawler {
 
                     URLs_crawled.add(urlToCrawl.toString());
                     numPagesCrawled.increment();
-                    //final File file = new File("filename.html");
-                    String filename = "tempFileName.html";
+
+                    // Figure out a name for the file.
+                    String filename = title.toString()+".html";
+                    int nameAttemptCounter = 1;
+                    while (fileNamesUsed.contains(filename)) {
+                        filename = title.toString()+nameAttemptCounter+".html";
+                        nameAttemptCounter++;
+
+                    }
+                    fileNamesUsed.add(filename);
+
                     Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), "UTF-8"));
                     try{
                         out.write(doc.outerHtml());
@@ -130,11 +138,11 @@ public class Crawler {
     protected File csvFile;
     protected int numberOfSpiders = 1;
     //    protected int numberOfQueues;
-    private URL seedURL;
     private ThreadSafeInt numPagesCrawled;
     private Set<String> recentlyAccessedURLs;  // For the URLs that should not be crawled again yet.
     private Queue<URL> URLs_to_crawl;       // For the URLs scraped and queued but not yet crawled
     private Set<String> URLs_crawled;          // For the URLs already crawled.
+    private Set<String> fileNamesUsed;
 
     // Contained Classes
     private FileInterface fileInterface;
@@ -146,6 +154,7 @@ public class Crawler {
         recentlyAccessedURLs = new ConcurrentSkipListSet<String>();
         URLs_to_crawl = new ConcurrentLinkedQueue<URL>();
         URLs_crawled = new ConcurrentSkipListSet<String>();
+        fileNamesUsed = new ConcurrentSkipListSet<String>();
 
         fileInterface = new FileInterface(this);
     }
