@@ -1,9 +1,11 @@
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
+import org.jsoup.safety.Cleaner;
+import org.jsoup.safety.Whitelist;
 import org.jsoup.select.Elements;
+import sun.net.www.protocol.file.FileURLConnection;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -78,7 +80,11 @@ public class Crawler {
 
                 //Open document
                 try {
-                    org.jsoup.nodes.Document doc = Jsoup.connect(urlToCrawl.toString()).get();
+                    org.jsoup.nodes.Document doc = Jsoup.connect(urlToCrawl.toString()).userAgent("Mozilla").get();
+
+                    //Clean downloaded document with Jsoup Cleaner. Removes images.
+                    Cleaner cleaner = new Cleaner(Whitelist.basic());
+                    doc = cleaner.clean(doc);
 
                     //Output title of the page
                     String title = doc.title();
@@ -94,8 +100,17 @@ public class Crawler {
                         System.out.println("link: " + linkString);
                     }
 
-                    numPagesCrawled.increment();
                     URLs_crawled.add(urlToCrawl);
+                    numPagesCrawled.increment();
+                    //final File file = new File("filename.html");
+                    String filename = "tempFileName.html";
+                    Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), "UTF-8"));
+                    try{
+                        out.write(doc.outerHtml());
+                    }
+                    finally {
+                        out.close();
+                    }
                 }
                 catch (IOException e){
                     System.err.println("Spider " + spiderID + ": " + e.getMessage());
@@ -136,6 +151,7 @@ public class Crawler {
     }
 
     public void startCrawl() {
+        System.out.println("Starting crawl.");
         // Dispose of the interface now that we're done with it..
         if (fileInterface != null) fileInterface.dispose();
 
