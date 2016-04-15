@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
  */
 public class Crawler {
     // Data
-    int numPagesCrawled;
+    private ThreadSafeInt numPagesCrawled;
     private Set<URL> recentlyAccessedURLs;  // For the URLs that should not be crawled again yet.
     private Queue<URL> URLs_to_crawl;       // For the URLs scraped and queued but not yet crawled
     private Set<URL> URLs_crawled;          // For the URLs already crawled.
@@ -23,7 +23,7 @@ public class Crawler {
     private CSV_Parser csvParser;
 
     Crawler () {
-        numPagesCrawled = 0;
+        numPagesCrawled = new ThreadSafeInt(0);
         recentlyAccessedURLs = new ConcurrentSkipListSet<>();
         URLs_to_crawl = new ConcurrentLinkedQueue<>();
         URLs_crawled = new ConcurrentSkipListSet<>();
@@ -33,10 +33,10 @@ public class Crawler {
 
         csvParser = new CSV_Parser();
         csvParser.parseFile(fileInterface.getFileChosen());
-        
+
         // Create Spiders and make them run.
 
-        //
+        // Do stuff with what the spiders gathered.
 
     }
 }
