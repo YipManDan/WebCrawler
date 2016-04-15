@@ -2,13 +2,17 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 /**
  * Created by Daniel on 4/6/2016.
  */
 public class FileInterface extends JFrame implements ActionListener{
 
+    //Data
     private final JFileChooser fc = new JFileChooser();
+//    int numberOfSpiders;
+//    int numberOfQueues;
 
     //Textfield to display user's selected filepath
     private JTextField tf;
@@ -65,6 +69,32 @@ public class FileInterface extends JFrame implements ActionListener{
         }
 
     }
+
+    /* Accessors */
+
+    /**
+     * Accessor called to get the file selected by the user.
+     * @return The file selected by the user.
+     */
+    public File getFileChosen() {
+        return fc.getSelectedFile();
+    }
+
+//    /**
+//     * Called to find out how many spiders the user wishes to use in the crawl.
+//     * @return An integer for the number of spiders to use in the crawl.
+//     */
+//    public int getNumberOfSpiders() {
+//        return numberOfSpiders;
+//    }
+//
+//    /**
+//     * Called to find out how many queues the user wishes to use for the crawl.
+//     * @return An integer for the number of queues to be used.
+//     */
+//    public int getNumberOfQueues() {
+//        return numberOfQueues;
+//    }
 
     public static void main(String[] args){
         new FileInterface();
