@@ -25,8 +25,9 @@ public class FileInterface extends JFrame implements ActionListener{
      * A constructor for the FileInterface class.
      */
     FileInterface(Crawler crawler){
-        this.crawler = crawler;
         super("Select a Specification File");
+
+        this.crawler = crawler;
 
         JPanel north, south;
 
@@ -68,8 +69,11 @@ public class FileInterface extends JFrame implements ActionListener{
             return;
         }
         if(o == okButton) {
-            crawler.csvFile = fileChooser.getSelectedFile();
-            this.dispose();
+            if (crawler != null)  {
+                crawler.csvFile = fileChooser.getSelectedFile();
+                crawler.startCrawl();
+            }
+            // Interface is disposed of in the crawler's startCrawl() method.
             return;
         }
 
@@ -102,7 +106,7 @@ public class FileInterface extends JFrame implements ActionListener{
 //    }
 
     public static void main(String[] args){
-        new FileInterface();
+        new FileInterface(null);
     }
 
 }

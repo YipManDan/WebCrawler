@@ -62,6 +62,7 @@ public class Crawler {
     private Set<URL> URLs_crawled;          // For the URLs already crawled.
 
     // Contained Classes
+    private FileInterface fileInterface;
     private CSV_Parser csvParser;
 
     Crawler () {
@@ -74,6 +75,9 @@ public class Crawler {
     }
 
     public void startCrawl() {
+        // Dispose of the interface now that we're done with it..
+        if (fileInterface != null) fileInterface.dispose();
+
         // Parse the CSV file.
         csvParser = new CSV_Parser();
         csvParser.parseFile(fileInterface.getFileChosen());
