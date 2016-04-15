@@ -12,6 +12,24 @@ import java.util.concurrent.ConcurrentSkipListSet;
  * @since   2016-04-13
  */
 public class Crawler {
+    /**
+     * The spider class that the Crawler class uses to perform the actual web crawling.
+     *
+     * @author  Daniel Yeh and Jesse Harder
+     * @version 1.0
+     * @since   2016-04-13
+     */
+    class Spider implements Runnable {
+        int spiderID;
+        Thread spiderThread;
+
+
+        Spider() {
+
+        };
+    }
+
+    /* ---------- Start Cralwer stuff here. ---------- */
 
     // Data
     private ThreadSafeInt numPagesCrawled;

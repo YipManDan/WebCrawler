@@ -10,17 +10,17 @@ class ThreadSafeInt {
 
     /* Accesor */
     public int val() {
-        synchronized (counter) {
+        synchronized (this) {
             return counter;
         }
     }
 
-    / * Mutators */
+    /* Mutators */
 
     public void increment() {increment(1);}
 
     public void increment(int amount) {
-        synchronized (counter) {
+        synchronized (this) {
             counter += amount;
         }
     }
@@ -28,8 +28,14 @@ class ThreadSafeInt {
     public void decrement() {decrement(1);}
 
     public void decrement(int amount) {
-        synchronized (counter) {
+        synchronized (this) {
             counter -= amount;
+        }
+    }
+
+    public void setCounter(int amount) {
+        synchronized (this) {
+            counter = amount;
         }
     }
 }
