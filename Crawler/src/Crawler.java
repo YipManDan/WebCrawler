@@ -28,10 +28,15 @@ public class Crawler {
         URLs_to_crawl = new ConcurrentLinkedQueue<>();
         URLs_crawled = new ConcurrentSkipListSet<>();
 
-        csvParser = new CSV_Parser();
         fileInterface = new FileInterface();
         // I don't know how you make the program wait here until the file interface is done getting user input.
 
+        csvParser = new CSV_Parser();
+        csvParser.parseFile(fileInterface.getFileChosen());
+        
+        // Create Spiders and make them run.
+
+        //
 
     }
 }
