@@ -1,4 +1,5 @@
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import javax.swing.text.Document;
@@ -56,7 +57,17 @@ public class Crawler {
                 //Open document
                 try {
                     org.jsoup.nodes.Document doc = Jsoup.connect(url.toString()).get();
-                    Elements links = doc.select("a[href]");
+
+                    //Output title of the page
+                    String title = doc.title();
+                    System.out.println("Spider " + spiderID + "downloaded: " + title);
+
+                    //Elements links = doc.select("a[href]");
+                    Elements links = doc.select("a");
+
+                    for(Element link: links) {
+                        System.out.println("link: " + link.attr("abs:href"));
+                    }
                 }
                 catch (IOException e){
                     System.err.println("Spider " + spiderID + ": " + e.getMessage());
