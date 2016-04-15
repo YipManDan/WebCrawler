@@ -56,9 +56,9 @@ public class Crawler {
                 url = URLs_to_crawl.poll();
 
 
-                //Open document
+                //Open document.
                 try {
-                    org.jsoup.nodes.Document doc = Jsoup.connect(url.toString()).get();
+                    org.jsoup.nodes.Document doc = Jsoup.connect(url.toString()).userAgent("Mozilla").get();
 
                     //Output title of the page
                     String title = doc.title();
