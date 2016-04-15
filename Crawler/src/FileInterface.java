@@ -14,14 +14,14 @@ import java.io.File;
 public class FileInterface extends JFrame implements ActionListener{
 
     //Data
-    private final JFileChooser fc = new JFileChooser();
+    private final JFileChooser fileChooser = new JFileChooser();
 //    int numberOfSpiders;
 //    int numberOfQueues;
 
     //Textfield to display user's selected filepath
-    private JTextField tf;
+    private JTextField textField;
 
-    private JButton open, ok;
+    private JButton openButton, okButton;
 
     /**
      * A constructor for the FileInterface class.
@@ -34,20 +34,20 @@ public class FileInterface extends JFrame implements ActionListener{
 
         //North panel contains text field displaying selected file path
         north = new JPanel(new GridLayout(1,1));
-        tf = new JTextField();
-        tf.setText("Select a file: ");
-        tf.setEditable(false);
-        tf.setBackground(Color.white);
-        north .add(tf);
+        textField = new JTextField();
+        textField.setText("Select a file: ");
+        textField.setEditable(false);
+        textField.setBackground(Color.white);
+        north .add(textField);
 
         //South panel contains select and confirm button
         south = new JPanel();
-        open = new JButton("Select a File");
-        open.addActionListener(this);
-        ok = new JButton("OK");
-        ok.addActionListener(this);
-        south.add(open);
-        south.add(ok);
+        openButton = new JButton("Select a File");
+        openButton.addActionListener(this);
+        okButton = new JButton("OK");
+        okButton.addActionListener(this);
+        south.add(openButton);
+        south.add(okButton);
 
         add(north, BorderLayout.NORTH);
         add(south, BorderLayout.CENTER);
@@ -62,14 +62,14 @@ public class FileInterface extends JFrame implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
-        if(o == open) {
-            int returnVal = fc.showOpenDialog(this);
+        if(o == openButton) {
+            int returnVal = fileChooser.showOpenDialog(this);
             if(returnVal == JFileChooser.CANCEL_OPTION)
                 return;
-            tf.setText(fc.getSelectedFile().getAbsolutePath());
+            textField.setText(fileChooser.getSelectedFile().getAbsolutePath());
             return;
         }
-        if(o == ok) {
+        if(o == okButton) {
             //();
             this.dispose();
             return;
@@ -84,7 +84,7 @@ public class FileInterface extends JFrame implements ActionListener{
      * @return The file selected by the user.
      */
     public File getFileChosen() {
-        return fc.getSelectedFile();
+        return fileChooser.getSelectedFile();
     }
 
 //    /**
