@@ -1,9 +1,15 @@
+
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 /**
- * Created by JHarder on 4/13/16.
+ * A class to parse the CSV file the crawler takes as input.
+ *
+ * @author  Daniel Yeh and Jesse Harder
+ * @version 1.0
+ * @since   2016-04-06
  */
 public class CSV_Parser {
     private String URL = "";

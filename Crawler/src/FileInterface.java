@@ -5,7 +5,11 @@ import java.awt.event.ActionListener;
 import java.io.File;
 
 /**
- * Created by Daniel on 4/6/2016.
+ * The FileInterface
+ *
+ * @author  Daniel Yeh and Jesse Harder
+ * @version 1.0
+ * @since   2016-04-06
  */
 public class FileInterface extends JFrame implements ActionListener{
 
@@ -19,6 +23,9 @@ public class FileInterface extends JFrame implements ActionListener{
 
     private JButton open, ok;
 
+    /**
+     * A constructor for the FileInterface class.
+     */
     FileInterface(){
 
         super("Select a Specification File");

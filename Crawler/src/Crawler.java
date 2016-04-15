@@ -1,3 +1,5 @@
+
+
 import java.net.URL;
 import java.util.Queue;
 import java.util.Set;
@@ -5,7 +7,11 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
- * Created by JHarder on 4/14/16.
+ * A web crawler created for our COEN 272 class.
+ *
+ * @author  Daniel Yeh and Jesse Harder
+ * @version 1.0
+ * @since   2016-04-13
  */
 public class Crawler {
     // Data
