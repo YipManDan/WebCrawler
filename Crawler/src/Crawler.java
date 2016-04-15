@@ -39,7 +39,7 @@ public class Crawler {
         public void run() {
             System.out.println("Spider " + spiderID + " is crawling.");
 
-            while (numPagesCrawled.val() < csvParser.numberOfPagesToCrawl) {
+            while (numPagesCrawled.val() < numberOfPagesToCrawl()) {
                 // Put main body of spider functionality here.
             }
 
@@ -69,12 +69,29 @@ public class Crawler {
         fileInterface = new FileInterface();
         // I don't know how you make the program wait here until the file interface is done getting user input.
 
+        // Parse the CSV file.
         csvParser = new CSV_Parser();
         csvParser.parseFile(fileInterface.getFileChosen());
+
+        // Add the seed URL to the list of URLs that need crawling.
+        URLs_to_crawl.add(seedURL());
 
         // Create Spiders and make them run.
 
         // Do stuff with what the spiders gathered.
 
+    }
+
+    /* Shorthand functions for accessing elements of csvParser */
+
+    // CSV Parser
+    private URL seedURL() {
+        return csvParser.seedURL;
+    }
+    private int numberOfPagesToCrawl() {
+        return csvParser.numberOfPagesToCrawl;
+    }
+    private URL URLRestriction() {
+        return csvParser.URLRestriction;
     }
 }
