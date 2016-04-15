@@ -75,7 +75,7 @@ public class Crawler {
                 hasSlept = false;
 
                 // Check if the URL to crawl has already been crawled.
-                if (URLs_crawled.contains(urlToCrawl))
+                if (URLs_crawled.contains(urlToCrawl.toString()))
                     continue;
 
                 //Open document
@@ -100,7 +100,7 @@ public class Crawler {
                         System.out.println("link: " + linkString);
                     }
 
-                    URLs_crawled.add(urlToCrawl);
+                    URLs_crawled.add(urlToCrawl.toString());
                     numPagesCrawled.increment();
                     //final File file = new File("filename.html");
                     String filename = "tempFileName.html";
@@ -132,9 +132,9 @@ public class Crawler {
     //    protected int numberOfQueues;
     private URL seedURL;
     private ThreadSafeInt numPagesCrawled;
-    private Set<URL> recentlyAccessedURLs;  // For the URLs that should not be crawled again yet.
+    private Set<String> recentlyAccessedURLs;  // For the URLs that should not be crawled again yet.
     private Queue<URL> URLs_to_crawl;       // For the URLs scraped and queued but not yet crawled
-    private Set<URL> URLs_crawled;          // For the URLs already crawled.
+    private Set<String> URLs_crawled;          // For the URLs already crawled.
 
     // Contained Classes
     private FileInterface fileInterface;
@@ -143,9 +143,9 @@ public class Crawler {
 
     Crawler () {
         numPagesCrawled = new ThreadSafeInt(0);
-        recentlyAccessedURLs = new ConcurrentSkipListSet<URL>();
+        recentlyAccessedURLs = new ConcurrentSkipListSet<String>();
         URLs_to_crawl = new ConcurrentLinkedQueue<URL>();
-        URLs_crawled = new ConcurrentSkipListSet<URL>();
+        URLs_crawled = new ConcurrentSkipListSet<String>();
 
         fileInterface = new FileInterface(this);
     }
