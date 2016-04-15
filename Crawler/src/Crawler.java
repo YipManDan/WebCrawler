@@ -1,3 +1,4 @@
+import java.io.File;
 import java.net.URL;
 import java.util.Queue;
 import java.util.Set;
@@ -51,13 +52,16 @@ public class Crawler {
     /* ---------- Start Cralwer stuff here. ---------- */
 
     // Data
+    protected File csvFile;
+//    protected int numberOfSpiders;
+//    protected int numberOfQueues;
+    private URL seedURL;
     private ThreadSafeInt numPagesCrawled;
     private Set<URL> recentlyAccessedURLs;  // For the URLs that should not be crawled again yet.
     private Queue<URL> URLs_to_crawl;       // For the URLs scraped and queued but not yet crawled
     private Set<URL> URLs_crawled;          // For the URLs already crawled.
 
     // Contained Classes
-    private FileInterface fileInterface;
     private CSV_Parser csvParser;
 
     Crawler () {
@@ -66,9 +70,10 @@ public class Crawler {
         URLs_to_crawl = new ConcurrentLinkedQueue<>();
         URLs_crawled = new ConcurrentSkipListSet<>();
 
-        fileInterface = new FileInterface();
-        // I don't know how you make the program wait here until the file interface is done getting user input.
+        new FileInterface(this);
+    }
 
+    public void startCrawl() {
         // Parse the CSV file.
         csvParser = new CSV_Parser();
         csvParser.parseFile(fileInterface.getFileChosen());
@@ -79,7 +84,6 @@ public class Crawler {
         // Create Spiders and make them run.
 
         // Do stuff with what the spiders gathered.
-
     }
 
     /* Shorthand functions for accessing elements of csvParser */

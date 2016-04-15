@@ -12,11 +12,9 @@ import java.io.File;
  * @since   2016-04-06
  */
 public class FileInterface extends JFrame implements ActionListener{
-
     //Data
     private final JFileChooser fileChooser = new JFileChooser();
-//    int numberOfSpiders;
-//    int numberOfQueues;
+    private Crawler crawler;
 
     //Textfield to display user's selected filepath
     private JTextField textField;
@@ -26,8 +24,8 @@ public class FileInterface extends JFrame implements ActionListener{
     /**
      * A constructor for the FileInterface class.
      */
-    FileInterface(){
-
+    FileInterface(Crawler crawler){
+        this.crawler = crawler;
         super("Select a Specification File");
 
         JPanel north, south;
@@ -70,7 +68,7 @@ public class FileInterface extends JFrame implements ActionListener{
             return;
         }
         if(o == okButton) {
-            //();
+            crawler.csvFile = fileChooser.getSelectedFile();
             this.dispose();
             return;
         }
