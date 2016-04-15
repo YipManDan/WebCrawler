@@ -1,4 +1,9 @@
+import org.jsoup.Jsoup;
+import org.jsoup.select.Elements;
+
+import javax.swing.text.Document;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Queue;
 import java.util.Set;
@@ -38,10 +43,26 @@ public class Crawler {
          */
         @Override
         public void run() {
+            URL url;
             System.out.println("Spider " + spiderID + " is crawling.");
 
             while (numPagesCrawled.val() < numberOfPagesToCrawl()) {
                 // Put main body of spider functionality here.
+
+                //Get URL to crawl from queue
+                url = URLs_to_crawl.poll();
+
+
+                //Open document
+                try {
+                    org.jsoup.nodes.Document doc = Jsoup.connect(url.toString()).get();
+                    Elements links = doc.select("a[href]");
+                }
+                catch (IOException e){
+                    System.err.println("Spider " + spiderID + ": " + e.getMessage());
+                    continue;
+                }
+
             }
 
             System.out.println("Spider " + spiderID + " has stopped crawling.");
@@ -67,9 +88,9 @@ public class Crawler {
 
     Crawler () {
         numPagesCrawled = new ThreadSafeInt(0);
-        recentlyAccessedURLs = new ConcurrentSkipListSet<>();
-        URLs_to_crawl = new ConcurrentLinkedQueue<>();
-        URLs_crawled = new ConcurrentSkipListSet<>();
+        recentlyAccessedURLs = new ConcurrentSkipListSet<URL>();
+        URLs_to_crawl = new ConcurrentLinkedQueue<URL>();
+        URLs_crawled = new ConcurrentSkipListSet<URL>();
 
         new FileInterface(this);
     }
