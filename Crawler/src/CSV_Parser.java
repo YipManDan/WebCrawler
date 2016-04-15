@@ -28,9 +28,14 @@ public class CSV_Parser {
     }
 
     CSV_Parser(String seedURL, int numPages, String URLRestriction) {
-        this.seedURL = new URL(seedURL);
         this.numberOfPagesToCrawl = numPages;
-        this.URLRestriction = new URL(URLRestriction);
+        try{
+            this.seedURL = new URL(seedURL);
+            this.URLRestriction = new URL(URLRestriction);
+        } catch (MalformedURLException e) {
+            System.out.println("MalformedURLException in CSV_Parser constructor.");
+            e.printStackTrace();
+        }
     }
 
     public void parseFile(File inputFile) {
