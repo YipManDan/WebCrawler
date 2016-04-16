@@ -133,10 +133,11 @@ public class Crawler {
         }
     }
 
-    /* ---------- Start Cralwer stuff here. ---------- */
+    /* ---------- Start Crawler stuff here. ---------- */
 
     // Data
     protected File csvFile;
+    protected String outputPath;
     protected int numberOfSpiders = 1;
     //    protected int numberOfQueues;
     private ThreadSafeInt numPagesCrawled;
