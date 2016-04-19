@@ -111,9 +111,13 @@ public class Crawler {
                     // Added the host of the URL we just accessed to a list.
                     // Use this list to see who not to access again soon.
                     recentlyAccessedURLHosts.add(urlToCrawl.getHost());
+
                     // Schedule a timer to remove that element from the list after a delay
                     // so that we can eventually go back to that host.
 
+                    /**
+                     * Inner class extending TimerTask in order to remove elements from the list of recently accessed URLs.
+                     */
                     class Remover_Task extends TimerTask {
                         String urlHostToRemove;
                         public void setHostToRemove(String urlHost) {urlHostToRemove = urlHost;}
