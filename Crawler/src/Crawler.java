@@ -70,6 +70,12 @@ public class Crawler {
                         continue;
                     }
                 }
+                else if (recentlyAccessedURLHosts.contains(urlToCrawl.getHost())) {
+                    // This host has been accessed recently.
+                    // Place back in queue to wait till later and try a different URL.
+                    URLs_to_crawl.add(urlToCrawl);
+                    continue;
+                }
 
                 hasSlept = false;
 
