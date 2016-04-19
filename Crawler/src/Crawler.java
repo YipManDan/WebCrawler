@@ -72,6 +72,7 @@ public class Crawler {
                 }
                 else if (URLRestriction() != null && !urlToCrawl.toString().contains(URLRestriction().toString())) {
                     // If the URL restriction is not within the url we are about to crawl, do not crawl it.
+                    // Could do this: URLs_not_to_crawl.add(urlToCrawl.toString());
                     continue;
                 }
                 else if (recentlyAccessedURLHosts.contains(urlToCrawl.getHost())) {
