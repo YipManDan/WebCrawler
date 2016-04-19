@@ -33,7 +33,7 @@ public class Crawler {
         Spider(int ID) {
             spiderID = ID;
             spiderThread = new Thread(this, "Spider Thread " + String.valueOf(spiderID));
-        };
+        }
 
         public void crawl() {
             spiderThread.start();
@@ -44,7 +44,7 @@ public class Crawler {
          */
         @Override
         public void run() {
-            final URL urlToCrawl;
+            URL urlToCrawl;
             System.out.println("Spider " + spiderID + " is crawling.");
 
             boolean hasSlept = false;
