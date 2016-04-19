@@ -70,17 +70,22 @@ public class Crawler {
                         continue;
                     }
                 }
-                else if (recentlyAccessedURLHosts.contains(urlToCrawl.getHost())) {
-                    // This host has been accessed recently.
-                    // Place back in queue to wait till later and try a different URL.
-                    URLs_to_crawl.add(urlToCrawl);
+                else if (!urlToCrawl.toString().contains(URLRestriction().toString())) {
+                    // If the URL restriction is not within the url we are about to crawl, do not crawl it.
                     continue;
+                }
+                else if (recentlyAccessedURLHosts.contains(urlToCrawl.getHost())) {
+                        // This host has been accessed recently.
+                        // Place back in queue to wait till later and try a different URL.
+                        URLs_to_crawl.add(urlToCrawl);
+                        continue;
+                    }
                 }
 
                 hasSlept = false;
 
                 // Check if the URL to crawl has already been crawled.
-                if (URLs_crawled.contains(urlToCrawl.toString()))
+                if (URLs_not_to_crawl.contains(urlToCrawl.toString()))
                     continue;
 
                 //Open document
@@ -105,15 +110,12 @@ public class Crawler {
                         System.out.println("link: " + linkString);
                     }
 
-                    URLs_crawled.add(urlToCrawl.toString());
+                    URLs_not_to_crawl.add(urlToCrawl.toString());
                     numPagesCrawled.increment();
 
                     // Added the host of the URL we just accessed to a list.
                     // Use this list to see who not to access again soon.
                     recentlyAccessedURLHosts.add(urlToCrawl.getHost());
-
-                    // Schedule a timer to remove that element from the list after a delay
-                    // so that we can eventually go back to that host.
 
                     /**
                      * Inner class extending TimerTask in order to remove elements from the list of recently accessed URLs.
@@ -123,21 +125,25 @@ public class Crawler {
                         public void setHostToRemove(String urlHost) {urlHostToRemove = urlHost;}
 
                         @Override public void run() {
+                            System.out.println("Removing "+urlHostToRemove+".");
                             recentlyAccessedURLHosts.remove(urlHostToRemove);
                         }
                     }
 
+                    // Schedule a timer to remove that element from the list after a delay
+                    // so that we can eventually go back to that host.
                     Timer t = new Timer();
                     Remover_Task removerTask = new Remover_Task();
                     removerTask.setHostToRemove(urlToCrawl.getHost());
+                    System.out.println("Scheduling timer to remove "+urlToCrawl.getHost()+".");
                     t.schedule(removerTask, accessDelay);
 
 
                     // Figure out a name for the file.
-                    String filename = title.toString()+".html";
+                    String filename = title+".html";
                     int nameAttemptCounter = 1;
                     while (fileNamesUsed.contains(filename)) {
-                        filename = title.toString()+nameAttemptCounter+".html";
+                        filename = title+nameAttemptCounter+".html";
                         nameAttemptCounter++;
 
                     }
@@ -153,13 +159,11 @@ public class Crawler {
                 }
                 catch (IOException e){
                     System.err.println("Spider " + spiderID + ": " + e.getMessage());
-                    continue;
                 }
 
             }
 
             System.out.println("Spider " + spiderID + " has stopped crawling.");
-            return;
         }
     }
 
@@ -174,7 +178,7 @@ public class Crawler {
     private Set<String> recentlyAccessedURLHosts;   // For the URLs that should not be crawled again yet.
     private int accessDelay = 5000;              // Number of miliseconds to wait before accessing the same server.
     private Queue<URL> URLs_to_crawl;           // For the URLs scraped and queued but not yet crawled
-    private Set<String> URLs_crawled;          // For the URLs already crawled.
+    private Set<String> URLs_not_to_crawl;          // For the URLs already crawled.
     private Set<String> fileNamesUsed;
 
     // Contained Classes
@@ -186,7 +190,7 @@ public class Crawler {
         numPagesCrawled = new ThreadSafeInt(0);
         recentlyAccessedURLHosts = new ConcurrentSkipListSet<String>();
         URLs_to_crawl = new ConcurrentLinkedQueue<URL>();
-        URLs_crawled = new ConcurrentSkipListSet<String>();
+        URLs_not_to_crawl = new ConcurrentSkipListSet<String>();
         fileNamesUsed = new ConcurrentSkipListSet<String>();
 
         fileInterface = new FileInterface(this);
