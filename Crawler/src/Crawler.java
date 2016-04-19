@@ -143,10 +143,10 @@ public class Crawler {
 
 
                     // Figure out a name for the file.
-                    String filename = outputPath+"/"+title+".html";
+                    String filename = outputPath+title+".html";
                     int nameAttemptCounter = 1;
                     while (fileNamesUsed.contains(filename)) {
-                        filename = outputPath+"/"+title+nameAttemptCounter+".html";
+                        filename = outputPath+title+nameAttemptCounter+".html";
                         nameAttemptCounter++;
 
                     }

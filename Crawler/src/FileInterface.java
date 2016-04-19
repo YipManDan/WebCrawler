@@ -87,7 +87,6 @@ public class FileInterface extends JFrame implements ActionListener{
             int returnVal = pathChooser.showOpenDialog(this);
             if(returnVal == JFileChooser.CANCEL_OPTION)
                 return;
-            System.out.println("Got here.");
             outputPath.setText(pathChooser.getSelectedFile().getAbsolutePath());
             revalidate();
             repaint();
@@ -96,8 +95,12 @@ public class FileInterface extends JFrame implements ActionListener{
         if(o == okButton) {
             if (crawler != null)  {
                 crawler.csvFile = fileChooser.getSelectedFile();
-                crawler.outputPath = pathChooser.getSelectedFile().getAbsolutePath();
-                System.out.println("Output path: "+crawler.outputPath);
+                if (pathChooser.getSelectedFile() != null)
+                    crawler.outputPath = pathChooser.getSelectedFile().getAbsolutePath() + "/";
+                else{
+                    System.err.println("Need to do something about default output path or delete this print.");
+                    crawler.outputPath = "";
+                }
                 crawler.startCrawl();
             }
             // Interface is disposed of in the crawler's startCrawl() method.
