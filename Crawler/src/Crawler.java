@@ -95,8 +95,8 @@ public class Crawler {
                     String title = doc.title();
 
                     //Clean downloaded document with Jsoup Cleaner. Removes images.
-                    Cleaner cleaner = new Cleaner(Whitelist.basic());
-                    doc = cleaner.clean(doc);
+//                    Cleaner cleaner = new Cleaner(Whitelist.basic());
+//                    doc = cleaner.clean(doc);
 
                     //Output title of the page
                     System.out.println("Title = "+title);
@@ -163,9 +163,11 @@ public class Crawler {
                     System.err.println("IOException for Spider " + spiderID + ": " + e.getMessage());
                 }
 
+                System.out.println("Number of pages crawled: "+numPagesCrawled);
             }
 
             System.out.println("Spider " + spiderID + " has stopped crawling.");
+            return;
         }
     }
 

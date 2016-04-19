@@ -38,4 +38,12 @@ class ThreadSafeInt {
             counter = amount;
         }
     }
+
+    @Override
+    public String toString() {
+        synchronized (this)
+        {
+            return Integer.toString(counter);
+        }
+    }
 }
