@@ -79,7 +79,6 @@ public class Crawler {
                         // Place back in queue to wait till later and try a different URL.
                         URLs_to_crawl.add(urlToCrawl);
                         continue;
-                    }
                 }
 
                 hasSlept = false;
