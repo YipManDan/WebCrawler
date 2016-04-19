@@ -141,12 +141,13 @@ public class Crawler {
                     System.out.println("Scheduling timer to remove "+urlToCrawl.getHost()+".");
                     t.schedule(removerTask, accessDelay);
 
-
                     // Figure out a name for the file.
-                    String filename = outputPath+title+".html";
+                    //String filename = outputPath+title+".html";
+                    String filename = outputPath + urlToCrawl.getHost().toString() + ".html";
                     int nameAttemptCounter = 1;
                     while (fileNamesUsed.contains(filename)) {
-                        filename = outputPath+title+nameAttemptCounter+".html";
+                        //filename = outputPath+title+nameAttemptCounter+".html";
+                        filename = outputPath + urlToCrawl.getHost().toString() + nameAttemptCounter + ".html";
                         nameAttemptCounter++;
 
                     }
@@ -207,9 +208,9 @@ public class Crawler {
         if (fileInterface != null) fileInterface.dispose();
 
         // Parse the CSV file.
-//        csvParser = new CSV_Parser();
-//        csvParser.parseFile(fileInterface.getFileChosen());
-        csvParser = new CSV_Parser("http://www.thesketchfellows.com/",1,"http://www.thesketchfellows.com/");
+        csvParser = new CSV_Parser();
+        csvParser.parseFile(fileInterface.getFileChosen());
+        //csvParser = new CSV_Parser("http://www.thesketchfellows.com/",1,"http://www.thesketchfellows.com/");
 
         // Add the seed URL to the list of URLs that need crawling.
         URLs_to_crawl.add(seedURL());
