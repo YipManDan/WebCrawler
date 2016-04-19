@@ -217,6 +217,16 @@ public class Crawler {
             spider.crawl();
         }
 
+        //Wait for all of the spiders to finish their work.
+        for (int i = 0; i < numberOfSpiders; i++) {
+            try {
+                spiders.get(i).spiderThread.join();
+            } catch (InterruptedException e) {
+                System.out.println("InterruptedException thrown in Crawler.startCrawl when trying to join spider threads.");
+                e.printStackTrace();
+            }
+        }
+
         // Do stuff with what the spiders gathered.
     }
 
