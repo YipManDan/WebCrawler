@@ -15,6 +15,7 @@ public class FileInterface extends JFrame implements ActionListener{
     //Data
     private final JFileChooser fileChooser = new JFileChooser();
     private final JFileChooser pathChooser = new JFileChooser();
+    private final String defaultPath = "";
     private Crawler crawler;
 
     //Textfield to display user's selected filepath
@@ -95,12 +96,11 @@ public class FileInterface extends JFrame implements ActionListener{
         if(o == okButton) {
             if (crawler != null)  {
                 crawler.csvFile = fileChooser.getSelectedFile();
-                if (pathChooser.getSelectedFile() != null)
-                    crawler.outputPath = pathChooser.getSelectedFile().getAbsolutePath() + "/";
-                else{
-//                    System.err.println("Need to do something about default output path or delete this print.");
-                    System.err.println("WARNING: Jesse is using his default file path in the code right now.");
-                    crawler.outputPath = "/Users/JHarder/Desktop/Temp/";
+                if(pathChooser.getSelectedFile() == null) {
+                    crawler.outputPath = defaultPath;
+                }
+                else {
+                    crawler.outputPath = pathChooser.getSelectedFile().getAbsolutePath() + "\\";
                 }
                 crawler.startCrawl();
             }

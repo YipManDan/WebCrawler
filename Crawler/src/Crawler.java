@@ -100,6 +100,7 @@ public class Crawler {
 
                     //Output title of the page
                     System.out.println("Spider " + spiderID + " downloaded: " + urlToCrawl);
+                    System.out.println("Spider " + spiderID + " downloaded: " + title.toString() + " " + urlToCrawl);
 
                     //Elements links = doc.select("a[href]");
                     Elements links = doc.select("a");
@@ -150,6 +151,7 @@ public class Crawler {
 
                     }
                     fileNamesUsed.add(filename);
+                    System.out.println("Saving file: " + filename);
 
                     Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), "UTF-8"));
                     try{
