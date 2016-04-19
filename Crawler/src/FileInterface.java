@@ -20,7 +20,7 @@ public class FileInterface extends JFrame implements ActionListener{
     //Textfield to display user's selected filepath
     private JTextField specFile, outputPath;
 
-    private JButton openButton, selectButton, okButton;
+    private JButton openButton, outputPathSelectButton, okButton;
 
     /**
      * A constructor for the FileInterface class.
@@ -53,12 +53,12 @@ public class FileInterface extends JFrame implements ActionListener{
         south = new JPanel();
         openButton = new JButton("Specification File");
         openButton.addActionListener(this);
-        selectButton = new JButton("Output Path");
-        selectButton.addActionListener(this);
+        outputPathSelectButton = new JButton("Output Path");
+        outputPathSelectButton.addActionListener(this);
         okButton = new JButton("OK");
         okButton.addActionListener(this);
         south.add(openButton);
-        south.add(selectButton);
+        south.add(outputPathSelectButton);
         south.add(okButton);
 
         add(north, BorderLayout.NORTH);
@@ -76,22 +76,28 @@ public class FileInterface extends JFrame implements ActionListener{
         Object o = e.getSource();
         if(o == openButton) {
             int returnVal = fileChooser.showOpenDialog(this);
-            if(returnVal == JFileChooser.CANCEL_OPTION)
+            if (returnVal == JFileChooser.CANCEL_OPTION)
                 return;
             specFile.setText(fileChooser.getSelectedFile().getAbsolutePath());
+            revalidate();
+            repaint();
             return;
         }
-        if(o == selectButton){
+        if(o == outputPathSelectButton){
             int returnVal = pathChooser.showOpenDialog(this);
             if(returnVal == JFileChooser.CANCEL_OPTION)
                 return;
+            System.out.println("Got here.");
             outputPath.setText(pathChooser.getSelectedFile().getAbsolutePath());
+            revalidate();
+            repaint();
             return;
         }
         if(o == okButton) {
             if (crawler != null)  {
                 crawler.csvFile = fileChooser.getSelectedFile();
                 crawler.outputPath = pathChooser.getSelectedFile().getAbsolutePath();
+                System.out.println("Output path: "+crawler.outputPath);
                 crawler.startCrawl();
             }
             // Interface is disposed of in the crawler's startCrawl() method.
