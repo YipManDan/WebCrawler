@@ -207,7 +207,7 @@ public class Crawler {
         // Parse the CSV file.
 //        csvParser = new CSV_Parser();
 //        csvParser.parseFile(fileInterface.getFileChosen());
-        csvParser = new CSV_Parser("http://www.thesketchfellows.com/",3,"http://www.thesketchfellows.com/");
+        csvParser = new CSV_Parser("http://www.thesketchfellows.com/",1,"http://www.thesketchfellows.com/");
 
         // Add the seed URL to the list of URLs that need crawling.
         URLs_to_crawl.add(seedURL());
