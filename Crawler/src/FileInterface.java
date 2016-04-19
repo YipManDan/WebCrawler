@@ -98,8 +98,9 @@ public class FileInterface extends JFrame implements ActionListener{
                 if (pathChooser.getSelectedFile() != null)
                     crawler.outputPath = pathChooser.getSelectedFile().getAbsolutePath() + "/";
                 else{
-                    System.err.println("Need to do something about default output path or delete this print.");
-                    crawler.outputPath = "";
+//                    System.err.println("Need to do something about default output path or delete this print.");
+                    System.err.println("WARNING: Jesse is using his default file path in the code right now.");
+                    crawler.outputPath = "/Users/JHarder/Desktop/Temp/";
                 }
                 crawler.startCrawl();
             }

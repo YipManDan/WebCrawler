@@ -99,7 +99,6 @@ public class Crawler {
                     doc = cleaner.clean(doc);
 
                     //Output title of the page
-                    System.out.println("Title = "+title);
                     System.out.println("Spider " + spiderID + " downloaded: " + urlToCrawl);
 
                     //Elements links = doc.select("a[href]");
@@ -208,7 +207,7 @@ public class Crawler {
         // Parse the CSV file.
 //        csvParser = new CSV_Parser();
 //        csvParser.parseFile(fileInterface.getFileChosen());
-        csvParser = new CSV_Parser("http://www.thesketchfellows.com/",5);
+        csvParser = new CSV_Parser("http://www.thesketchfellows.com/",3,"http://www.thesketchfellows.com/");
 
         // Add the seed URL to the list of URLs that need crawling.
         URLs_to_crawl.add(seedURL());
@@ -232,6 +231,9 @@ public class Crawler {
         }
 
         // Maybe do stuff with what the spiders gathered.
+        System.out.println("Got to end of startCrawl.");
+        // End code execution here.
+        System.exit(0);
     }
 
     /* Shorthand functions for accessing elements of csvParser */
