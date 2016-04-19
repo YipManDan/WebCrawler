@@ -113,14 +113,20 @@ public class Crawler {
                     recentlyAccessedURLHosts.add(urlToCrawl.getHost());
                     // Schedule a timer to remove that element from the list after a delay
                     // so that we can eventually go back to that host.
-                    Timer t = new Timer();
-                    t.schedule(new TimerTask() {
-                        private String urlHostToRemove = urlToCrawl.getHost();
-                        @Override
-                        public void run() {
+
+                    class Remover_Task extends TimerTask {
+                        String urlHostToRemove;
+                        public void setHostToRemove(String urlHost) {urlHostToRemove = urlHost;}
+
+                        @Override public void run() {
                             recentlyAccessedURLHosts.remove(urlHostToRemove);
                         }
-                    }, accessDelay);
+                    }
+
+                    Timer t = new Timer();
+                    Remover_Task removerTask = new Remover_Task();
+                    removerTask.setHostToRemove(urlToCrawl.getHost());
+                    t.schedule(removerTask, accessDelay);
 
 
                     // Figure out a name for the file.
