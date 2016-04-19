@@ -95,8 +95,8 @@ public class Crawler {
                     String title = doc.title();
 
                     //Clean downloaded document with Jsoup Cleaner. Removes images.
-//                    Cleaner cleaner = new Cleaner(Whitelist.basic());
-//                    doc = cleaner.clean(doc);
+                    Cleaner cleaner = new Cleaner(Whitelist.basic());
+                    doc = cleaner.clean(doc);
 
                     //Output title of the page
                     System.out.println("Title = "+title);
@@ -134,6 +134,7 @@ public class Crawler {
 
                     // Schedule a timer to remove that element from the list after a delay
                     // so that we can eventually go back to that host.
+                    int accessDelay = 5000;
                     Timer t = new Timer();
                     Remover_Task removerTask = new Remover_Task();
                     removerTask.setHostToRemove(urlToCrawl.getHost());
@@ -142,7 +143,7 @@ public class Crawler {
 
 
                     // Figure out a name for the file.
-                    String filename = title+".html";
+                    String filename = outputPath+"/"+title+".html";
                     int nameAttemptCounter = 1;
                     while (fileNamesUsed.contains(filename)) {
                         filename = title+nameAttemptCounter+".html";
@@ -180,7 +181,6 @@ public class Crawler {
     //    protected int numberOfQueues;
     private ThreadSafeInt numPagesCrawled;
     private Set<String> recentlyAccessedURLHosts;   // For the URLs that should not be crawled again yet.
-    private int accessDelay = 5000;              // Number of miliseconds to wait before accessing the same server.
     private Queue<URL> URLs_to_crawl;           // For the URLs scraped and queued but not yet crawled
     private Set<String> URLs_not_to_crawl;          // For the URLs already crawled.
     private Set<String> fileNamesUsed;
