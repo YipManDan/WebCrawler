@@ -92,12 +92,14 @@ public class Crawler {
                 try {
                     org.jsoup.nodes.Document doc = Jsoup.connect(urlToCrawl.toString()).userAgent("Mozilla").get();
 
+                    String title = doc.title();
+
                     //Clean downloaded document with Jsoup Cleaner. Removes images.
                     Cleaner cleaner = new Cleaner(Whitelist.basic());
                     doc = cleaner.clean(doc);
 
                     //Output title of the page
-                    String title = doc.title();
+                    System.out.println("Title = "+title);
                     System.out.println("Spider " + spiderID + " downloaded: " + urlToCrawl);
 
                     //Elements links = doc.select("a[href]");
@@ -107,7 +109,7 @@ public class Crawler {
                         String linkString = link.attr("abs:href");
                         URL urlToQueue = new URL(linkString);
                         URLs_to_crawl.add(urlToQueue);
-                        System.out.println("link: " + linkString);
+//                        System.out.println("link: " + linkString);
                     }
 
                     URLs_not_to_crawl.add(urlToCrawl.toString());
@@ -158,7 +160,7 @@ public class Crawler {
                     }
                 }
                 catch (IOException e){
-                    System.err.println("Spider " + spiderID + ": " + e.getMessage());
+                    System.err.println("IOException for Spider " + spiderID + ": " + e.getMessage());
                 }
 
             }
@@ -227,7 +229,7 @@ public class Crawler {
             }
         }
 
-        // Do stuff with what the spiders gathered.
+        // Maybe do stuff with what the spiders gathered.
     }
 
     /* Shorthand functions for accessing elements of csvParser */
