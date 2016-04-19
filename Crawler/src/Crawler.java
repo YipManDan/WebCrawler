@@ -40,11 +40,11 @@ public class Crawler {
         }
 
         /**
-         * The main functionalty of the Spider goes here.
+         * The main functionality of the Spider goes here.
          */
         @Override
         public void run() {
-            URL urlToCrawl;
+            final URL urlToCrawl;
             System.out.println("Spider " + spiderID + " is crawling.");
 
             boolean hasSlept = false;
@@ -55,6 +55,7 @@ public class Crawler {
 
                 // If the queue was empty, either kill self or sleep.
                 if (urlToCrawl == null) {
+                    // Already tried once and slept. Queue is
                     if (numberOfSpiders == 1 || hasSlept)
                         break;
                     else
@@ -64,6 +65,8 @@ public class Crawler {
                         catch (InterruptedException e) {
                             System.err.println("InterruptException when Spider "+spiderID+" was sleeping.");
                         }
+
+                        // Wake up and try again.
                         continue;
                     }
                 }
@@ -99,9 +102,20 @@ public class Crawler {
                     URLs_crawled.add(urlToCrawl.toString());
                     numPagesCrawled.increment();
 
-                    /* Need to add top level of URL to list of top levels not to be
-                     * queried and make a Timer to remove the URL at a later time.
-                     */
+                    // Added the host of the URL we just accessed to a list.
+                    // Use this list to see who not to access again soon.
+                    recentlyAccessedURLHosts.add(urlToCrawl.getHost());
+                    // Schedule a timer to remove that element from the list after a delay
+                    // so that we can eventually go back to that host.
+                    Timer t = new Timer();
+                    t.schedule(new TimerTask() {
+                        private String urlHostToRemove = urlToCrawl.getHost();
+                        @Override
+                        public void run() {
+                            recentlyAccessedURLHosts.remove(urlHostToRemove);
+                        }
+                    }, accessDelay);
+
 
                     // Figure out a name for the file.
                     String filename = title.toString()+".html";
@@ -141,8 +155,9 @@ public class Crawler {
     protected int numberOfSpiders = 1;
     //    protected int numberOfQueues;
     private ThreadSafeInt numPagesCrawled;
-    private Set<String> recentlyAccessedURLs;  // For the URLs that should not be crawled again yet.
-    private Queue<URL> URLs_to_crawl;       // For the URLs scraped and queued but not yet crawled
+    private Set<String> recentlyAccessedURLHosts;   // For the URLs that should not be crawled again yet.
+    private int accessDelay = 5000;              // Number of miliseconds to wait before accessing the same server.
+    private Queue<URL> URLs_to_crawl;           // For the URLs scraped and queued but not yet crawled
     private Set<String> URLs_crawled;          // For the URLs already crawled.
     private Set<String> fileNamesUsed;
 
@@ -153,7 +168,7 @@ public class Crawler {
 
     Crawler () {
         numPagesCrawled = new ThreadSafeInt(0);
-        recentlyAccessedURLs = new ConcurrentSkipListSet<String>();
+        recentlyAccessedURLHosts = new ConcurrentSkipListSet<String>();
         URLs_to_crawl = new ConcurrentLinkedQueue<URL>();
         URLs_crawled = new ConcurrentSkipListSet<String>();
         fileNamesUsed = new ConcurrentSkipListSet<String>();
