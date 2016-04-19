@@ -70,7 +70,7 @@ public class Crawler {
                         continue;
                     }
                 }
-                else if (!urlToCrawl.toString().contains(URLRestriction().toString())) {
+                else if (URLRestriction() != null && !urlToCrawl.toString().contains(URLRestriction().toString())) {
                     // If the URL restriction is not within the url we are about to crawl, do not crawl it.
                     continue;
                 }
