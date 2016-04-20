@@ -92,6 +92,26 @@ public class Crawler {
                 try {
                     org.jsoup.nodes.Document doc = Jsoup.connect(urlToCrawl.toString()).userAgent("Mozilla").get();
 
+                    String title = doc.title();
+
+                    //Clean downloaded document with Jsoup Cleaner. Removes images.
+                    Cleaner cleaner = new Cleaner(Whitelist.basic());
+                    doc = cleaner.clean(doc);
+
+                    //Output title of the page
+                    System.out.println("Spider " + spiderID + " downloaded: " + urlToCrawl);
+                    System.out.println("Spider " + spiderID + " downloaded: " + title.toString() + " " + urlToCrawl);
+
+                    //Elements links = doc.select("a[href]");
+                    Elements links = doc.select("a");
+
+                    for(Element link: links) {
+                        String linkString = link.attr("abs:href");
+                        URL urlToQueue = new URL(linkString);
+                        URLs_to_crawl.add(urlToQueue);
+//                        System.out.println("link: " + linkString);
+                    }
+
                     URLs_not_to_crawl.add(urlToCrawl.toString());
                     numPagesCrawled.increment();
 
@@ -121,37 +141,18 @@ public class Crawler {
                     System.out.println("Scheduling timer to remove "+urlToCrawl.getHost()+".");
                     t.schedule(removerTask, accessDelay);
 
-                    // Parse the downloaded document for desired information.
-
-                    String title = doc.title();
-
-                    //Clean downloaded document with Jsoup Cleaner. Removes images.
-                    Cleaner cleaner = new Cleaner(Whitelist.basic());
-                    doc = cleaner.clean(doc);
-
-                    //Output title of the page
-                    System.out.println("Spider " + spiderID + " downloaded: " + urlToCrawl);
-
-                    //Elements links = doc.select("a[href]");
-                    Elements links = doc.select("a");
-
-                    for(Element link: links) {
-                        String linkString = link.attr("abs:href");
-                        URL urlToQueue = new URL(linkString);
-                        URLs_to_crawl.add(urlToQueue);
-//                        System.out.println("link: " + linkString);
-                    }
-
-
                     // Figure out a name for the file.
-                    String filename = outputPath+title+".html";
+                    //String filename = outputPath+title+".html";
+                    String filename = outputPath + urlToCrawl.getHost().toString() + ".html";
                     int nameAttemptCounter = 1;
                     while (fileNamesUsed.contains(filename)) {
-                        filename = outputPath+title+nameAttemptCounter+".html";
+                        //filename = outputPath+title+nameAttemptCounter+".html";
+                        filename = outputPath + urlToCrawl.getHost().toString() + nameAttemptCounter + ".html";
                         nameAttemptCounter++;
 
                     }
                     fileNamesUsed.add(filename);
+                    System.out.println("Saving file: " + filename);
 
                     Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), "UTF-8"));
                     try{
@@ -207,9 +208,9 @@ public class Crawler {
         if (fileInterface != null) fileInterface.dispose();
 
         // Parse the CSV file.
-//        csvParser = new CSV_Parser();
-//        csvParser.parseFile(fileInterface.getFileChosen());
-        csvParser = new CSV_Parser("http://www.thesketchfellows.com/",1,"http://www.thesketchfellows.com/");
+        csvParser = new CSV_Parser();
+        csvParser.parseFile(fileInterface.getFileChosen());
+        //csvParser = new CSV_Parser("http://www.thesketchfellows.com/",1,"http://www.thesketchfellows.com/");
 
         // Add the seed URL to the list of URLs that need crawling.
         URLs_to_crawl.add(seedURL());
