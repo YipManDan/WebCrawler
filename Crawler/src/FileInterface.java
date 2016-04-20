@@ -1,6 +1,7 @@
 import com.sun.deploy.util.SystemUtils;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,6 +34,7 @@ public class FileInterface extends JFrame implements ActionListener{
 
         this.crawler = crawler;
 
+        fileChooser.setFileFilter(new FileNameExtensionFilter("CSV Files", "csv"));
         pathChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
         JPanel north, south;
@@ -102,7 +104,7 @@ public class FileInterface extends JFrame implements ActionListener{
                     crawler.outputPath = defaultPath;
                 }
                 else {
-                    crawler.outputPath = pathChooser.getSelectedFile().getAbsolutePath() + "\\";
+                    crawler.outputPath = pathChooser.getSelectedFile().getAbsolutePath() + System.getProperty("file.separator");
                 }
                 crawler.startCrawl();
             }

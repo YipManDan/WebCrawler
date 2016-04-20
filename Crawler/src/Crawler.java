@@ -95,7 +95,10 @@ public class Crawler {
                     String title = doc.title();
 
                     //Clean downloaded document with Jsoup Cleaner. Removes images.
-                    Cleaner cleaner = new Cleaner(Whitelist.basic());
+                    Whitelist whitelist = Whitelist.basic();
+                    //whitelist.addTags("head", "html");
+                    whitelist.addTags("title", "head");
+                    Cleaner cleaner = new Cleaner(whitelist);
                     doc = cleaner.clean(doc);
 
                     //Output title of the page
@@ -104,6 +107,12 @@ public class Crawler {
 
                     //Elements links = doc.select("a[href]");
                     Elements links = doc.select("a");
+                    Elements images = doc.select("img[src]");
+
+                    //Number of images
+                    //images.size();
+                    //Number of outlinks
+                    //links.size();
 
                     for(Element link: links) {
                         String linkString = link.attr("abs:href");
@@ -138,18 +147,15 @@ public class Crawler {
                     Timer t = new Timer();
                     Remover_Task removerTask = new Remover_Task();
                     removerTask.setHostToRemove(urlToCrawl.getHost());
-                    System.out.println("Scheduling timer to remove "+urlToCrawl.getHost()+".");
+                    System.out.println("Scheduling timer to remove " + urlToCrawl.getHost() + ".");
                     t.schedule(removerTask, accessDelay);
 
                     // Figure out a name for the file.
-                    //String filename = outputPath+title+".html";
                     String filename = outputPath + urlToCrawl.getHost().toString() + ".html";
                     int nameAttemptCounter = 1;
                     while (fileNamesUsed.contains(filename)) {
-                        //filename = outputPath+title+nameAttemptCounter+".html";
                         filename = outputPath + urlToCrawl.getHost().toString() + nameAttemptCounter + ".html";
                         nameAttemptCounter++;
-
                     }
                     fileNamesUsed.add(filename);
                     System.out.println("Saving file: " + filename);
@@ -191,6 +197,7 @@ public class Crawler {
     private FileInterface fileInterface;
     private CSV_Parser csvParser;
     private List<Spider> spiders;
+    private BufferedWriter bufferedWriter;
 
     Crawler () {
         numPagesCrawled = new ThreadSafeInt(0);
@@ -200,6 +207,7 @@ public class Crawler {
         fileNamesUsed = new ConcurrentSkipListSet<String>();
 
         fileInterface = new FileInterface(this);
+
     }
 
     public void startCrawl() {
@@ -214,6 +222,16 @@ public class Crawler {
 
         // Add the seed URL to the list of URLs that need crawling.
         URLs_to_crawl.add(seedURL());
+
+        //Create Report.html
+        try {
+            bufferedWriter = new BufferedWriter(new FileWriter(outputPath + "Report.html"));
+            bufferedWriter.write("<!doctype html>\n<html>\n<head>\n\t<title>Report</title>\n</head>\n<body>\n<h1>Hello World</h1>\n</body>\n</html>");
+            bufferedWriter.close();
+        }
+        catch (IOException e){
+            System.err.println("IOException creating bufferedWriter" + e.getMessage());
+        }
 
         spiders = new ArrayList<Spider>();
         // Create Spiders and make them run.
