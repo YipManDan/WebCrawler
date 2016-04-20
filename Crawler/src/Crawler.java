@@ -1,3 +1,4 @@
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.safety.Cleaner;
@@ -90,14 +91,25 @@ public class Crawler {
 
                 //Open document
                 try {
-                    org.jsoup.nodes.Document doc = Jsoup.connect(urlToCrawl.toString()).userAgent("Mozilla").get();
+                    Connection connection = Jsoup.connect(urlToCrawl.toString()).userAgent("Mozilla");
+                    org.jsoup.nodes.Document doc = connection.get();
+                    int statusCode = connection.timeout(5000).execute().statusCode();
+
+                    /*
+                    Connection connection = Jsoup.connect(urlToCrawl.toString()).userAgent("Mozilla");
+                    Connection.Response response = connection.timeout(5000).execute();
+                    Document doc = Jsoup.parse(response.body());
+                    int statusCode = response.statusCode();
+                    //org.jsoup.nodes.Document doc = connection.get();
+                    */
 
                     String title = doc.title();
 
+                    //Get Links
+                    Elements images = doc.select("img[src]");
+
                     //Clean downloaded document with Jsoup Cleaner. Removes images.
                     Whitelist whitelist = Whitelist.basic();
-                    //whitelist.addTags("head", "html");
-                    whitelist.addTags("title", "head");
                     Cleaner cleaner = new Cleaner(whitelist);
                     doc = cleaner.clean(doc);
 
@@ -105,14 +117,7 @@ public class Crawler {
                     System.out.println("Spider " + spiderID + " downloaded: " + urlToCrawl);
                     System.out.println("Spider " + spiderID + " downloaded: " + title.toString() + " " + urlToCrawl);
 
-                    //Elements links = doc.select("a[href]");
                     Elements links = doc.select("a");
-                    Elements images = doc.select("img[src]");
-
-                    //Number of images
-                    //images.size();
-                    //Number of outlinks
-                    //links.size();
 
                     for(Element link: links) {
                         String linkString = link.attr("abs:href");
@@ -160,6 +165,18 @@ public class Crawler {
                     fileNamesUsed.add(filename);
                     System.out.println("Saving file: " + filename);
 
+                    try{
+                        bufferedWriter.write("<tr>\n\t\t<td><a href=\"" + urlToCrawl + "\">" + title + "</a></td>\n" +
+                                "\t\t<td><a href=\"" + filename + "\">" + urlToCrawl.getHost().toString()+nameAttemptCounter + ".html</a></td>\n" +
+                                "\t\t<td>" + statusCode + "</td>\n" +
+                                "\t\t<td>" + links.size() + "</td>\n" +
+                                "\t\t<td>" + images.size() + "</td>\n" +
+                                "\t</tr>");
+                    }
+                    catch (IOException e){
+                        System.err.println("IOException writing to HTML file: " + title + " " + e.getMessage());
+                    }
+
                     Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), "UTF-8"));
                     try{
                         out.write(doc.outerHtml());
@@ -169,7 +186,7 @@ public class Crawler {
                     }
                 }
                 catch (IOException e){
-                    System.err.println("IOException for Spider " + spiderID + ": " + e.getMessage());
+                    System.err.println("IOException for Spider " + spiderID + ": " + e.toString());
                 }
 
                 System.out.println("Number of pages crawled: "+numPagesCrawled);
@@ -197,7 +214,7 @@ public class Crawler {
     private FileInterface fileInterface;
     private CSV_Parser csvParser;
     private List<Spider> spiders;
-    private BufferedWriter bufferedWriter;
+    protected BufferedWriter bufferedWriter;
 
     Crawler () {
         numPagesCrawled = new ThreadSafeInt(0);
@@ -226,8 +243,9 @@ public class Crawler {
         //Create Report.html
         try {
             bufferedWriter = new BufferedWriter(new FileWriter(outputPath + "Report.html"));
-            bufferedWriter.write("<!doctype html>\n<html>\n<head>\n\t<title>Report</title>\n</head>\n<body>\n<h1>Hello World</h1>\n</body>\n</html>");
-            bufferedWriter.close();
+            bufferedWriter.write("<!doctype html>\n<html>\n<head>\n\t<title>Report</title>\n</head>\n");
+            bufferedWriter.write("<body>\n\t<table border=\"1\">\n\t<tr>\n\t\t<th>Title</th>\n\t\t<th>Document Locaiton</th>\n\t\t<th>HTTP Status Code</th>\n" +
+                    "\t\t<th>Number of Outlinks</th>\n\t\t<th>Number of Images</th>\n\t</tr>");
         }
         catch (IOException e){
             System.err.println("IOException creating bufferedWriter" + e.getMessage());
@@ -251,6 +269,14 @@ public class Crawler {
             }
         }
 
+        //End html file
+        try {
+            bufferedWriter.write("</table>\n</body>\n</html>");
+            bufferedWriter.close();
+        }
+        catch (IOException e){
+            System.err.println("IOException at end of html file: " + e.getMessage());
+        }
         // Maybe do stuff with what the spiders gathered.
         System.out.println("Got to end of startCrawl.");
         // End code execution here.
