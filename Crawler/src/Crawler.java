@@ -110,10 +110,12 @@ public class Crawler {
                     Elements images = doc.select("img[src]");
 
                     //Clean downloaded document with Jsoup Cleaner. Removes images.
-                    Whitelist whitelist = Whitelist.basic();
-                    whitelist.addTags("html", "head");
-                    Cleaner cleaner = new Cleaner(whitelist);
-                    doc = cleaner.clean(doc);
+                    //Whitelist whitelist = Whitelist.relaxed();
+                    //whitelist.addTags("all");
+                    //whitelist.removeTags("img");
+                    //Cleaner cleaner = new Cleaner(whitelist);
+                    //doc = cleaner.clean(doc);
+                    images.remove();
 
                     //Output title of the page
                     System.out.println("Spider " + spiderID + " downloaded: " + urlToCrawl);
