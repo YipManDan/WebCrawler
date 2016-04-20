@@ -7,6 +7,7 @@ import org.jsoup.select.Elements;
 
 import java.io.*;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -121,6 +122,9 @@ public class Crawler {
 
                     for(Element link: links) {
                         String linkString = link.attr("abs:href");
+                        System.out.println("Saving URL: " + linkString);
+                        if(linkString.length() == 0)
+                            continue;
                         URL urlToQueue = new URL(linkString);
                         URLs_to_crawl.add(urlToQueue);
 //                        System.out.println("link: " + linkString);
