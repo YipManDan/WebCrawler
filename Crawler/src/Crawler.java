@@ -92,25 +92,6 @@ public class Crawler {
                 try {
                     org.jsoup.nodes.Document doc = Jsoup.connect(urlToCrawl.toString()).userAgent("Mozilla").get();
 
-                    String title = doc.title();
-
-                    //Clean downloaded document with Jsoup Cleaner. Removes images.
-                    Cleaner cleaner = new Cleaner(Whitelist.basic());
-                    doc = cleaner.clean(doc);
-
-                    //Output title of the page
-                    System.out.println("Spider " + spiderID + " downloaded: " + urlToCrawl);
-
-                    //Elements links = doc.select("a[href]");
-                    Elements links = doc.select("a");
-
-                    for(Element link: links) {
-                        String linkString = link.attr("abs:href");
-                        URL urlToQueue = new URL(linkString);
-                        URLs_to_crawl.add(urlToQueue);
-//                        System.out.println("link: " + linkString);
-                    }
-
                     URLs_not_to_crawl.add(urlToCrawl.toString());
                     numPagesCrawled.increment();
 
@@ -139,6 +120,27 @@ public class Crawler {
                     removerTask.setHostToRemove(urlToCrawl.getHost());
                     System.out.println("Scheduling timer to remove "+urlToCrawl.getHost()+".");
                     t.schedule(removerTask, accessDelay);
+
+                    // Parse the downloaded document for desired information.
+
+                    String title = doc.title();
+
+                    //Clean downloaded document with Jsoup Cleaner. Removes images.
+                    Cleaner cleaner = new Cleaner(Whitelist.basic());
+                    doc = cleaner.clean(doc);
+
+                    //Output title of the page
+                    System.out.println("Spider " + spiderID + " downloaded: " + urlToCrawl);
+
+                    //Elements links = doc.select("a[href]");
+                    Elements links = doc.select("a");
+
+                    for(Element link: links) {
+                        String linkString = link.attr("abs:href");
+                        URL urlToQueue = new URL(linkString);
+                        URLs_to_crawl.add(urlToQueue);
+//                        System.out.println("link: " + linkString);
+                    }
 
 
                     // Figure out a name for the file.
