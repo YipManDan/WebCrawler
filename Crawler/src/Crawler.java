@@ -248,7 +248,7 @@ public class Crawler {
         try {
             bufferedWriter = new BufferedWriter(new FileWriter(outputPath + "Report.html"));
             bufferedWriter.write("<!doctype html>\n<html>\n<head>\n\t<title>Report</title>\n</head>\n");
-            bufferedWriter.write("<body>\n\t<table border=\"1\">\n\t<tr>\n\t\t<th>Title</th>\n\t\t<th>Document Locaiton</th>\n\t\t<th>HTTP Status Code</th>\n" +
+            bufferedWriter.write("<body>\n\t<table border=\"1\">\n\t<tr>\n\t\t<th>Title</th>\n\t\t<th>Document Location</th>\n\t\t<th>HTTP Status Code</th>\n" +
                     "\t\t<th>Number of Outlinks</th>\n\t\t<th>Number of Images</th>\n\t</tr>");
         }
         catch (IOException e){
