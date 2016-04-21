@@ -19,7 +19,7 @@ public class FileInterface extends JFrame implements ActionListener{
     //Data
     private final JFileChooser fileChooser = new JFileChooser();
     private final JFileChooser pathChooser = new JFileChooser();
-    private final String defaultPath = "";
+    private final String defaultPath = "repository";
     private Crawler crawler;
 
     //Textfield to display user's selected filepath
@@ -103,7 +103,7 @@ public class FileInterface extends JFrame implements ActionListener{
                 crawler.csvFile = fileChooser.getSelectedFile();
                 String path;
                 if(pathChooser.getSelectedFile() == null) {
-                    path = defaultPath + System.getProperty("file.separator") + "repository";
+                    path = defaultPath;
                 }
                 else {
                     path = pathChooser.getSelectedFile().getAbsolutePath() + System.getProperty("file.separator") + "repository";
