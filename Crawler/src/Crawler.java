@@ -93,8 +93,8 @@ public class Crawler {
                 //Open document
                 try {
                     Connection connection = Jsoup.connect(urlToCrawl.toString()).userAgent("Mozilla");
-                    org.jsoup.nodes.Document doc = connection.get();
                     int statusCode = connection.timeout(5000).execute().statusCode();
+                    org.jsoup.nodes.Document doc = connection.get();
 
                     /*
                     Connection connection = Jsoup.connect(urlToCrawl.toString()).userAgent("Mozilla");
