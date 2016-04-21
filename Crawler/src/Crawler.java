@@ -247,9 +247,9 @@ public class Crawler {
         // Add the seed URL to the list of URLs that need crawling.
         URLs_to_crawl.add(seedURL());
 
-        //Create Report.html
+        //Create report.html
         try {
-            bufferedWriter = new BufferedWriter(new FileWriter(outputPath + "Report.html"));
+            bufferedWriter = new BufferedWriter(new FileWriter(outputPath + "report.html"));
             bufferedWriter.write("<!doctype html>\n<html>\n<head>\n\t<title>Report</title>\n</head>\n");
             bufferedWriter.write("<body>\n\t<table border=\"1\">\n\t<tr>\n\t\t<th>Title</th>\n\t\t<th>Document Location</th>\n\t\t<th>HTTP Status Code</th>\n" +
                     "\t\t<th>Number of Outlinks</th>\n\t\t<th>Number of Images</th>\n\t</tr>");

@@ -77,6 +77,10 @@ public class FileInterface extends JFrame implements ActionListener{
         this.setVisible(true);
     }
 
+    private String fileSep() {
+        return System.getProperty("file.separator");
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
@@ -106,7 +110,7 @@ public class FileInterface extends JFrame implements ActionListener{
                     path = defaultPath;
                 }
                 else {
-                    path = pathChooser.getSelectedFile().getAbsolutePath() + System.getProperty("file.separator") + "repository";
+                    path = pathChooser.getSelectedFile().getAbsolutePath() + fileSep() + "repository";
                 }
 
                 // Creating or otherwise handling the repository directory.
@@ -114,7 +118,7 @@ public class FileInterface extends JFrame implements ActionListener{
                 if (!dir.exists())
                     new File(path).mkdir(); // Create the repository directory.
 
-                crawler.outputPath = path + System.getProperty("file.separator");
+                crawler.outputPath = path + fileSep();
                 crawler.startCrawl();
             }
             // Interface is disposed of in the crawler's startCrawl() method.
