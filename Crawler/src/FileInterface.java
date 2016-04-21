@@ -110,7 +110,8 @@ public class FileInterface extends JFrame implements ActionListener{
                 }
 
                 // Creating or otherwise handling the repository directory.
-                if (!Files.exists(path))
+                File dir = new File(path);
+                if (!dir.exists())
                     new File(path).mkdir(); // Create the repository directory.
 
                 crawler.outputPath = path + System.getProperty("file.separator");
