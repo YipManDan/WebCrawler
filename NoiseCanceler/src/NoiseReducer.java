@@ -1,4 +1,6 @@
-import java.io.File;
+import org.apache.commons.io.FilenameUtils;
+
+import java.io.*;
 
 /**
  * Created by Daniel on 4/20/2016.
@@ -25,7 +27,16 @@ public class NoiseReducer {
         File[] inDirectoryListing = inDir.listFiles();
         if (inDirectoryListing != null) {
             for (File containedFile : inDirectoryListing) {
-                System.out.println(containedFile.getName());
+                if (containedFile.getName().equals("Report.html"))
+                {
+                    System.out.println("Found it!");
+                    continue;
+                }
+
+                String extension = FilenameUtils.getExtension(containedFile.getName());
+                if (extension != "html") continue;
+
+                System.out.println(containedFile.getName() + " - " + extension);
             }
         }
 

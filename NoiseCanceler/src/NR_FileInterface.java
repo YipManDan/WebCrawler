@@ -81,20 +81,20 @@ public class NR_FileInterface extends JFrame implements ActionListener {
         Object o = e.getSource();
 
         if(o == openButton) {
-            int returnVal = outputPathChooser.showOpenDialog(this);
+            int returnVal = inputPathChooser.showOpenDialog(this);
             if (returnVal == JFileChooser.CANCEL_OPTION)
                 return;
-            inputPath.setText(outputPathChooser.getSelectedFile().getAbsolutePath());
+            inputPath.setText(inputPathChooser.getSelectedFile().getAbsolutePath());
             revalidate();
             repaint();
             return;
         }
 
         if(o == outputPathSelectButton){
-            int returnVal = inputPathChooser.showOpenDialog(this);
+            int returnVal = outputPathChooser.showOpenDialog(this);
             if(returnVal == JFileChooser.CANCEL_OPTION)
                 return;
-            outputPath.setText(inputPathChooser.getSelectedFile().getAbsolutePath());
+            outputPath.setText(outputPathChooser.getSelectedFile().getAbsolutePath());
             revalidate();
             repaint();
             return;
