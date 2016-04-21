@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.nio.file.Files;
 
 /**
  * The FileInterface
@@ -107,7 +108,11 @@ public class FileInterface extends JFrame implements ActionListener{
                 else {
                     path = pathChooser.getSelectedFile().getAbsolutePath() + System.getProperty("file.separator") + "repository";
                 }
-                new File(path).mkdir(); // Create the repository directory.
+
+                // Creating or otherwise handling the repository directory.
+                if (!Files.exists(path))
+                    new File(path).mkdir(); // Create the repository directory.
+
                 crawler.outputPath = path + System.getProperty("file.separator");
                 crawler.startCrawl();
             }
