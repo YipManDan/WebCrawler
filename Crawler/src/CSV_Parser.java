@@ -75,6 +75,7 @@ public class CSV_Parser {
             // Read in the seedURL restriction field, if one is there.
             if (csvScanner.hasNext())
                 URLRestriction = new URL(csvScanner.next());
+            else URLRestriction = null;
         } catch(FileNotFoundException exception)
         {
             System.out.println("FileNotFoundException in CSV_Parser.parseFile(): The file " + inputFile.getPath() + " was not found.");

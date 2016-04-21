@@ -100,12 +100,15 @@ public class FileInterface extends JFrame implements ActionListener{
         if(o == okButton) {
             if (crawler != null)  {
                 crawler.csvFile = fileChooser.getSelectedFile();
+                String path;
                 if(pathChooser.getSelectedFile() == null) {
-                    crawler.outputPath = defaultPath;
+                    path = defaultPath + System.getProperty("file.separator") + "repository";
                 }
                 else {
-                    crawler.outputPath = pathChooser.getSelectedFile().getAbsolutePath() + System.getProperty("file.separator");
+                    path = pathChooser.getSelectedFile().getAbsolutePath() + System.getProperty("file.separator") + "repository";
                 }
+                new File(path).mkdir(); // Create the repository directory.
+                crawler.outputPath = path + System.getProperty("file.separator");
                 crawler.startCrawl();
             }
             // Interface is disposed of in the crawler's startCrawl() method.
