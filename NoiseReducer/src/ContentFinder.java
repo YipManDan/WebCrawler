@@ -22,7 +22,7 @@ public class ContentFinder {
         //sums
         int low, mid, high;
         int sum, bestSum;
-        int midNext, highNext;
+        int highNext;
         /*
         integer i will point to the upper inclusive bound of low.
         integer j will point to the lower inclusive bound of high.
@@ -33,24 +33,22 @@ public class ContentFinder {
         sum = 0;
         bestSum = sum;
         //Initialize midNext and highNext which will be the initial values for mid and high
-        midNext = (1 - parseTuples.get(1).getBit());
         highNext = 0;
-        for(j = 2; j < parseTuples.size(); j++){
+        for(j = 1; j < parseTuples.size(); j++){
             highNext += parseTuples.get(j).getBit();
         }
 
         for(i = 0; i < parseTuples.size()-1; i++){
             low += parseTuples.get(i).getBit();
-            mid = midNext;
+            mid = 0;
             high = highNext;
-            midNext += (1 - parseTuples.get(i + 1).getBit());
-            highNext -= parseTuples.get(i + 2).getBit();
+            highNext -= parseTuples.get(i + 1).getBit();
 
             //initially low starts at 0 then.
             //initially high starts where? I think at i + 1?
             for(j = i + 2; j < parseTuples.size(); j++){
                 mid += (1 - parseTuples.get(j - 1).getBit());
-                high -= parseTuples.get(j).getBit();
+                high -= parseTuples.get(j - 1).getBit();
                 sum = low + mid + high;
                 if(sum > bestSum){
                     bestSum = sum;
