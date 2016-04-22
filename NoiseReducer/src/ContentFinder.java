@@ -38,6 +38,10 @@ public class ContentFinder {
             highNext += parseTuples.get(j).getBit();
         }
 
+        /*
+        O([n^2-n]/2) = O(n^2)
+        Loops checks all possible combinations of low, high, and mid to determine the maximum.
+         */
         for(i = 0; i < parseTuples.size()-1; i++){
             low += parseTuples.get(i).getBit();
             mid = 0;
@@ -61,6 +65,23 @@ public class ContentFinder {
 
 
 
+    }
+
+    /**
+     * Uh... not sure if I even want this... Maybe closer to even 1/3 split is better? I dunno...
+     * @param i index of new lowPosition
+     * @param j index of new highPosition
+     * @return  true if better(?) false if not
+     */
+    private boolean isCloserToMid(int i, int j){
+        int lowNew, highNew;
+        int lowOld, highOld;
+        int midPosition = (int)(parseTuples.size()/2 + .5);
+        lowNew = Math.abs(midPosition - parseTuples.get(i).getPosition());
+        highNew = Math.abs(midPosition - parseTuples.get(j).getPosition());
+        lowOld = Math.abs(midPosition - lowPosition);
+        highOld = Math.abs(midPosition - highPosition);
+        return true;
     }
 
 }
