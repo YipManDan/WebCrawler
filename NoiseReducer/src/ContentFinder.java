@@ -8,6 +8,11 @@ public class ContentFinder {
     protected int lowPosition;
     protected int highPosition;
 
+    /**
+     * Constructor for ContentFinder. Takes in a list of parsetuples which should represent
+     * a document. The method findContent will then indicate where the relevant content is most likely located.
+     * @param parseTuples   List of parsetuples representing binary bits for a document where 1 represents a tag token and 0 a non-tag token.
+     */
     ContentFinder(List<ParseTuple> parseTuples){
         this.parseTuples = parseTuples;
 
@@ -16,6 +21,11 @@ public class ContentFinder {
         findContent();
     }
 
+    /**
+     * Loops through list of parsetuples and finds the range (mid)
+     * with a high chance of being content.
+     * Maximizing tag/token ratio above and below mid while minimizing tag/token ratio in the mid-range.
+     */
     void findContent(){
         //indexes
         int i, j;
@@ -51,9 +61,14 @@ public class ContentFinder {
             //Prior to loop we can visualize i and j as next to each other
             //When the loop begins, j move to the right once and mid has a width of one.
             for(j = i + 2; j < parseTuples.size(); j++){
+                //mid gets a new element, so we add to it
                 mid += (1 - parseTuples.get(j - 1).getBit());
+                //high loses an element, so we subtract from it
                 high -= parseTuples.get(j - 1).getBit();
+
                 sum = low + mid + high;
+
+                //if current sum is the highest, we store the positions of the tokens
                 if(sum > bestSum){
                     bestSum = sum;
                     lowPosition = parseTuples.get(i).getPosition();
