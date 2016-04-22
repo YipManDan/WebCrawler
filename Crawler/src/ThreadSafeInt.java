@@ -46,4 +46,16 @@ class ThreadSafeInt {
             return Integer.toString(counter);
         }
     }
+
+    /**
+     * Created by Daniel on 4/21/2016.
+     */
+    public static class indexedBit {
+        private int position;
+        private int bit;
+        indexedBit(int position, int bit){
+            this.position = position;
+            this.bit = bit;
+        }
+    }
 }
