@@ -32,7 +32,7 @@ public class ContentFinder {
         low = 0;
         sum = 0;
         bestSum = sum;
-        //Initialize midNext and highNext which will be the initial values for mid and high
+        //Initialize highNext which will be the initial values for high
         highNext = 0;
         for(j = 1; j < parseTuples.size(); j++){
             highNext += parseTuples.get(j).getBit();
@@ -48,8 +48,8 @@ public class ContentFinder {
             high = highNext;
             highNext -= parseTuples.get(i + 1).getBit();
 
-            //initially low starts at 0 then.
-            //initially high starts where? I think at i + 1?
+            //Prior to loop we can visualize i and j as next to each other
+            //When the loop begins, j move to the right once and mid has a width of one.
             for(j = i + 2; j < parseTuples.size(); j++){
                 mid += (1 - parseTuples.get(j - 1).getBit());
                 high -= parseTuples.get(j - 1).getBit();
