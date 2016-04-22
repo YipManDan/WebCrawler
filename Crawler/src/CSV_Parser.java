@@ -73,9 +73,16 @@ public class CSV_Parser {
                 System.err.println("CSV File Reading Error: Could not read number of pages to crawl");
 
             // Read in the seedURL restriction field, if one is there.
-            if (csvScanner.hasNext())
-                URLRestriction = new URL(csvScanner.next());
-            else URLRestriction = null;
+            if (csvScanner.hasNext()) {
+                try {
+                    URLRestriction = new URL(csvScanner.next());
+                }
+                catch (MalformedURLException e) {
+                    URLRestriction = null;
+                }
+            }
+            else
+                URLRestriction = null;
         } catch(FileNotFoundException exception)
         {
             System.out.println("FileNotFoundException in CSV_Parser.parseFile(): The file " + inputFile.getPath() + " was not found.");
