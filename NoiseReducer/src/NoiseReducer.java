@@ -23,9 +23,7 @@ public class NoiseReducer {
     }
 
     public void noiseReduce() {
-
-        System.out.println("Your in path was: " + inputPath);
-        System.out.println("Your out path was: " + outputPath);
+        fileInterface.dispose();
 
         // Iterate over all of the files in the directory.
         File inDir = new File(inputPath);
@@ -42,10 +40,10 @@ public class NoiseReducer {
                 if (!extension.equals("html"))
                     continue;
 
-                List<Integer> bitStream;
+                List<ParseTuple> parseTupleList;
 
                 try {
-                    bitStream = parseFile(containedFile);
+                    parseTupleList = parseFile(containedFile);
                 }
                 catch (IOException e) {
                     System.err.println("NoiseReducer.noiseReduce: IOException thrown by call to parseFile.");
@@ -71,14 +69,58 @@ public class NoiseReducer {
      * @return A List of
      * @throws FileNotFoundException
      */
-    private List<Integer> parseFile(File targetFile) throws IOException {
-        List<Integer> bitStream = new ArrayList<Integer>();
+    private List<ParseTuple> parseFile(File targetFile) throws IOException {
+        List<ParseTuple> parseTuples = new ArrayList<ParseTuple>();
 
-        // Create scanner
-        Document doc = Jsoup.parse(targetFile, "UTF-8");
+        Scanner scanner = new Scanner(targetFile);
+        String token = "";
 
+        FileInputStream inputStream = new FileInputStream(targetFile);
+        char currentChar = 's', prevChar;
+        boolean readingTag = false;
+        int counter = 0;
 
-        return bitStream;
+        while (inputStream.available() > 0) {
+            prevChar = currentChar;
+            currentChar = (char) inputStream.read();
+
+            if (Character.isWhitespace(currentChar)) {
+                if (!readingTag && token != "") {
+//                    System.out.println(token);
+                    parseTuples.add(new ParseTuple(token,counter,0));
+                    token = "";
+                }
+            }
+            else {
+                // Start a tag
+                if (currentChar == '<' && prevChar != '\\') {
+                    if (token != "") {
+//                        System.out.println(token);
+                        parseTuples.add(new ParseTuple(token,counter,0));
+                        token = "";
+                    }
+                    readingTag = true;
+                }
+                // End a tag.
+                else if (readingTag && currentChar == '>' && prevChar !='\\') {
+                    readingTag = false;
+                    token += currentChar;
+//                    System.out.println(token);
+                    parseTuples.add(new ParseTuple(token,counter,1));
+                    token = "";
+                    continue;
+                }
+//                System.out.println(""+currentChar+" - "+token+" - "+readingTag);
+                token += currentChar;
+            }
+
+        }
+
+        for (ParseTuple tuple : parseTuples) {
+            System.out.println(tuple.getToken() + " - " + tuple.getBit());
+        }
+
+        return parseTuples;
     }
 
     public static void main(String[] args){
