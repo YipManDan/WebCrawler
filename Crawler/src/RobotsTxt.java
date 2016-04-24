@@ -19,38 +19,46 @@ public class RobotsTxt {
     private String[] parsedLine;
     List<URL> disallowedURLs;
 
-    RobotsTxt(){
+    RobotsTxt(URL url){
+        this.url = url;
 
-        try{
 
-            inputStream = (new URL(url.getHost() + "robots.txt")).openStream();
-            bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-        }
-        catch (Exception e){
-            System.err.println("Exception at Robots.txt: " + e);
-        }
+//        try{
+//
+//            inputStream = (new URL(url.getHost() + "robots.txt")).openStream();
+//            bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+//        }
+//        catch (Exception e){
+//            System.err.println("Exception at Robots.txt: " + e);
+//        }
     }
 
-    private void getDisallowList(){
-        try {
-            while ((line = bufferedReader.readLine()) != null) {
-                System.out.println(line);
-                if (line.contains("User-agent:")) {
-                    parsedLine = line.split(" ");
-                    userAgent = parsedLine[1];
-                    System.out.println("User-agent is: " + userAgent);
-                } else if (line.length() == 0)
-                    continue;
-                else if (userAgent.equals("*")) {
-                    parsedLine = line.split(" ");
-                    disallowedURLs.add(new URL(url.getHost() + parsedLine[1]));
-                }
-
-            }
-        }
-        catch (Exception e){
-            System.err.println("Exception at getDisallowList: " + e);
-        }
-
-    }
+//    private void getDisallowList(){
+//        try {
+//            while ((line = bufferedReader.readLine()) != null) {
+//                System.out.println(line);
+//                if (line.contains("User-agent:")) {
+//                    parsedLine = line.split(" ");
+//                    userAgent = parsedLine[1];
+//                    System.out.println("User-agent is: " + userAgent);
+//                } else if (line.length() == 0)
+//                    continue;
+//                else if (userAgent.equals("*")) {
+//                    parsedLine = line.split(" ");
+//                    disallowedURLs.add(new URL(url.getHost() + parsedLine[1]));
+//                }
+//
+//            }
+//        }
+//        catch (Exception e){
+//            System.err.println("Exception at getDisallowList: " + e);
+//        }
+//
+//        System.out.printf("Disallowed List:");
+//        for (URL url: disallowedURLs) {
+//            System.out.println(url);
+//        }
+//        System.out.println("Done with Disallowed List");
+//        System.out.println("");
+//    }
 }

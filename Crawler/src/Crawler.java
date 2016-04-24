@@ -72,23 +72,33 @@ public class Crawler {
                         continue;
                     }
                 }
-                else if (URLRestriction() != null && !urlToCrawl.toString().startsWith(URLRestriction().toString())) {
-                    // If the URL restriction is not within the url we are about to crawl, do not crawl it.
-                    // Could do this: URLs_not_to_crawl.add(urlToCrawl.toString());
-                    continue;
-                }
-                else if (recentlyAccessedURLHosts.contains(urlToCrawl.getHost())) {
-                        // This host has been accessed recently.
-                        // Place back in queue to wait till later and try a different URL.
-                        URLs_to_crawl.add(urlToCrawl);
-                        continue;
-                }
 
                 hasSlept = false;
 
                 // Check if the URL to crawl has already been crawled.
                 if (URLs_not_to_crawl.contains(urlToCrawl.toString()))
                     continue;
+
+                // If the url we are about to crawl does not match the URL restriction, do not crawl it.
+                if (URLRestriction() != null && !urlToCrawl.toString().startsWith(URLRestriction().toString())) {
+                    // Could do this: URLs_not_to_crawl.add(urlToCrawl.toString());
+                    // I think that is slower though than just doing the string compare.
+                    continue;
+                }
+
+                // Check to see if this host has been accessed recently.
+                if (recentlyAccessedURLHosts.contains(urlToCrawl.getHost())) {
+                        // This host has been accessed recently.
+                        // Place back in queue to wait till later and try a different URL.
+                        URLs_to_crawl.add(urlToCrawl);
+                        continue;
+                }
+
+                // Check the robots.txt file to see if the host disallows this URL to be accessed.
+
+                // DO THAT HERE!
+
+                /* At this point we are ready to get the page. */
 
                 //Open document
                 try {
