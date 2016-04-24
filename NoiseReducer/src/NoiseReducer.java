@@ -41,10 +41,10 @@ public class NoiseReducer {
                 List<LexTuple> lexTupleList;
 
                 try {
-                    lexTupleList = parseFile(containedFile);
+                    lexTupleList = lexFile(containedFile);
                 }
                 catch (IOException e) {
-                    System.err.println("NoiseReducer.noiseReduce: IOException thrown by call to parseFile.");
+                    System.err.println("NoiseReducer.noiseReduce: IOException thrown by call to lexFile.");
                 }
 
 
@@ -67,7 +67,7 @@ public class NoiseReducer {
      * @return A List of
      * @throws FileNotFoundException
      */
-    private List<LexTuple> parseFile(File targetFile) throws IOException {
+    private List<LexTuple> lexFile(File targetFile) throws IOException {
         List<LexTuple> lexTuples = new ArrayList<LexTuple>();
 
         Scanner scanner = new Scanner(targetFile);
@@ -114,6 +114,7 @@ public class NoiseReducer {
 
         }
 
+        // Used to output all of the tokens of the file for debugging purpose.
         for (LexTuple tuple : lexTuples) {
             System.out.println(tuple.getToken() + " - " + tuple.getBit());
         }
