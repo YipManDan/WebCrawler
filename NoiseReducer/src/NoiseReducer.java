@@ -1,6 +1,4 @@
 import org.apache.commons.io.FilenameUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -40,10 +38,10 @@ public class NoiseReducer {
                 if (!extension.equals("html"))
                     continue;
 
-                List<ParseTuple> parseTupleList;
+                List<LexTuple> lexTupleList;
 
                 try {
-                    parseTupleList = parseFile(containedFile);
+                    lexTupleList = parseFile(containedFile);
                 }
                 catch (IOException e) {
                     System.err.println("NoiseReducer.noiseReduce: IOException thrown by call to parseFile.");
@@ -69,8 +67,8 @@ public class NoiseReducer {
      * @return A List of
      * @throws FileNotFoundException
      */
-    private List<ParseTuple> parseFile(File targetFile) throws IOException {
-        List<ParseTuple> parseTuples = new ArrayList<ParseTuple>();
+    private List<LexTuple> parseFile(File targetFile) throws IOException {
+        List<LexTuple> lexTuples = new ArrayList<LexTuple>();
 
         Scanner scanner = new Scanner(targetFile);
         String token = "";
@@ -87,7 +85,7 @@ public class NoiseReducer {
             if (Character.isWhitespace(currentChar)) {
                 if (!readingTag && token != "") {
 //                    System.out.println(token);
-                    parseTuples.add(new ParseTuple(token,counter,0));
+                    lexTuples.add(new LexTuple(token,counter,0));
                     token = "";
                 }
             }
@@ -96,7 +94,7 @@ public class NoiseReducer {
                 if (currentChar == '<' && prevChar != '\\') {
                     if (token != "") {
 //                        System.out.println(token);
-                        parseTuples.add(new ParseTuple(token,counter,0));
+                        lexTuples.add(new LexTuple(token,counter,0));
                         token = "";
                     }
                     readingTag = true;
@@ -106,7 +104,7 @@ public class NoiseReducer {
                     readingTag = false;
                     token += currentChar;
 //                    System.out.println(token);
-                    parseTuples.add(new ParseTuple(token,counter,1));
+                    lexTuples.add(new LexTuple(token,counter,1));
                     token = "";
                     continue;
                 }
@@ -116,11 +114,11 @@ public class NoiseReducer {
 
         }
 
-        for (ParseTuple tuple : parseTuples) {
+        for (LexTuple tuple : lexTuples) {
             System.out.println(tuple.getToken() + " - " + tuple.getBit());
         }
 
-        return parseTuples;
+        return lexTuples;
     }
 
     public static void main(String[] args){

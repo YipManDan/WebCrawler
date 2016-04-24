@@ -4,20 +4,20 @@ import java.util.List;
  * Created by Daniel on 4/21/2016.
  */
 public class ContentFinder {
-    private List<ParseTuple> parseTuples;
+    private List<LexTuple> lexTuples;
     protected int lowPosition;
     protected int highPosition;
 
     /**
      * Constructor for ContentFinder. Takes in a list of parsetuples which should represent
      * a document. The method findContent will then indicate where the relevant content is most likely located.
-     * @param parseTuples   List of parsetuples representing binary bits for a document where 1 represents a tag token and 0 a non-tag token.
+     * @param lexTuples   List of parsetuples representing binary bits for a document where 1 represents a tag token and 0 a non-tag token.
      */
-    ContentFinder(List<ParseTuple> parseTuples){
-        this.parseTuples = parseTuples;
+    ContentFinder(List<LexTuple> lexTuples){
+        this.lexTuples = lexTuples;
 
         lowPosition = 0;
-        highPosition = parseTuples.get(parseTuples.size()-1).getPosition();
+        highPosition = lexTuples.get(lexTuples.size()-1).getPosition();
         findContent();
     }
 
@@ -44,35 +44,35 @@ public class ContentFinder {
         bestSum = sum;
         //Initialize highNext which will be the initial values for high
         highNext = 0;
-        for(j = 1; j < parseTuples.size(); j++){
-            highNext += parseTuples.get(j).getBit();
+        for(j = 1; j < lexTuples.size(); j++){
+            highNext += lexTuples.get(j).getBit();
         }
 
         /*
         O([n^2-n]/2) = O(n^2)
         Loops checks all possible combinations of low, high, and mid to determine the maximum.
          */
-        for(i = 0; i < parseTuples.size()-1; i++){
-            low += parseTuples.get(i).getBit();
+        for(i = 0; i < lexTuples.size()-1; i++){
+            low += lexTuples.get(i).getBit();
             mid = 0;
             high = highNext;
-            highNext -= parseTuples.get(i + 1).getBit();
+            highNext -= lexTuples.get(i + 1).getBit();
 
             //Prior to loop we can visualize i and j as next to each other
             //When the loop begins, j move to the right once and mid has a width of one.
-            for(j = i + 2; j < parseTuples.size(); j++){
+            for(j = i + 2; j < lexTuples.size(); j++){
                 //mid gets a new element, so we add to it
-                mid += (1 - parseTuples.get(j - 1).getBit());
+                mid += (1 - lexTuples.get(j - 1).getBit());
                 //high loses an element, so we subtract from it
-                high -= parseTuples.get(j - 1).getBit();
+                high -= lexTuples.get(j - 1).getBit();
 
                 sum = low + mid + high;
 
                 //if current sum is the highest, we store the positions of the tokens
                 if(sum > bestSum){
                     bestSum = sum;
-                    lowPosition = parseTuples.get(i).getPosition();
-                    highPosition = parseTuples.get(j).getPosition();
+                    lowPosition = lexTuples.get(i).getPosition();
+                    highPosition = lexTuples.get(j).getPosition();
                 }
 
             }
@@ -91,9 +91,9 @@ public class ContentFinder {
     private boolean isCloserToMid(int i, int j){
         int lowNew, highNew;
         int lowOld, highOld;
-        int midPosition = (int)(parseTuples.size()/2 + .5);
-        lowNew = Math.abs(midPosition - parseTuples.get(i).getPosition());
-        highNew = Math.abs(midPosition - parseTuples.get(j).getPosition());
+        int midPosition = (int)(lexTuples.size()/2 + .5);
+        lowNew = Math.abs(midPosition - lexTuples.get(i).getPosition());
+        highNew = Math.abs(midPosition - lexTuples.get(j).getPosition());
         lowOld = Math.abs(midPosition - lowPosition);
         highOld = Math.abs(midPosition - highPosition);
         return true;

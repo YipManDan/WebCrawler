@@ -1,12 +1,12 @@
 /**
  * Created by Daniel on 4/21/2016.
  */
-public class ParseTuple {
+public class LexTuple {
     private String token;
     private int position;
     private int bit;
 
-    ParseTuple(String token, int position, int bit){
+    LexTuple(String token, int position, int bit){
         this.token = token;
         this.position = position;
         this.bit = bit;
