@@ -38,6 +38,7 @@ public final class Lexer {
 //                    System.out.println(token);
                     lexTuples.add(new LexTuple(token,counter,0));
                     token = "";
+                    counter++;
                 }
             }
             else {
@@ -47,6 +48,7 @@ public final class Lexer {
 //                        System.out.println(token);
                         lexTuples.add(new LexTuple(token,counter,0));
                         token = "";
+                        counter++;
                     }
                     readingTag = true;
                 }
@@ -57,6 +59,7 @@ public final class Lexer {
 //                    System.out.println(token);
                     lexTuples.add(new LexTuple(token,counter,1));
                     token = "";
+                    counter++;
                     continue;
                 }
 //                System.out.println(""+currentChar+" - "+token+" - "+readingTag);
@@ -68,9 +71,9 @@ public final class Lexer {
         inputStream.close();
 
         // Used to output all of the tokens of the file for debugging.
-//        for (LexTuple tuple : lexTuples) {
-//            System.out.println(tuple.getToken() + " - " + tuple.getBit());
-//        }
+        for (LexTuple tuple : lexTuples) {
+            System.out.println(tuple.getToken() + " - " + tuple.getPosition() +  " - " + tuple.getBit());
+        }
 
         return lexTuples;
     }

@@ -46,32 +46,32 @@ public class NoiseReducer {
                     lexTupleList = Lexer.lexFile(containedFile);
 
                     // Run analysis on lexTupleList.
-//                    ContentFinder contentFinder = new ContentFinder(lexTupleList);
-                }
-                catch (IOException e) {
-                    lexTupleList = null;
-                    System.err.println("NoiseReducer.noiseReduce: IOException thrown by call to lexFile when opening file to analyze.");
-                    System.exit(1);
-                }
+                    ContentFinder contentFinder = new ContentFinder(lexTupleList);
 
-                // Write out the tokens in the list in the identified reason.
-                if (lexTupleList != null) {
-                    BufferedWriter outputWriter;
-                    try {
+                    System.out.println("Content Finder finished.");
+                    System.out.println("Lower position: "+contentFinder.lowPosition);
+                    System.out.println("High position: "+contentFinder.highPosition);
+
+                    // Write out the tokens in the list in the identified reason.
+                    if (lexTupleList != null) {
+                        BufferedWriter outputWriter;
+
                         outputWriter = new BufferedWriter(new FileWriter(outputPath + containedFile.getName()));
-                        for (int i = 0; i < lexTupleList.size(); i++){
+                        for (int i = contentFinder.lowPosition; i <= contentFinder.highPosition; i++){
                             outputWriter.write(lexTupleList.get(i).getToken() + "\n");
                         }
                         outputWriter.close();
                     }
-                    catch (IOException e) {
-                        System.err.println("NoiseReducer.noiseReduce: IOException thrown by call to lexFile when opening file to write out to..");
-                        e.printStackTrace();
+                    // The lexTupleList was null, meaning that there isn't anything to write out.
+                    else {
+                        System.err.println("NoiseReducer.noiseReduce: Lex Tuple list was null.");
+                        System.exit(1);
                     }
                 }
-                // The lexTupleList was null, meaning that there isn't anything to write out.
-                else {
-                    System.err.println("NoiseReducer.noiseReduce: Lex Tuple list was null.");
+                catch (IOException e) {
+                    lexTupleList = null;
+                    System.err.println("NoiseReducer.noiseReduce: IOException thrown by call to lexFile.");
+                    System.err.println(e.getMessage());
                     System.exit(1);
                 }
             }
