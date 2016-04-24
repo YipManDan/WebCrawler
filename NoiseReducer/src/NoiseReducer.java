@@ -22,6 +22,8 @@ public class NoiseReducer {
 
     public void noiseReduce() {
         fileInterface.dispose();
+//        System.out.println("Input path: "+inputPath);
+//        System.out.println("Output path: "+outputPath);
 
         // Iterate over all of the files in the directory.
         File inDir = new File(inputPath);
@@ -38,16 +40,40 @@ public class NoiseReducer {
                 if (!extension.equals("html"))
                     continue;
 
-                List<LexTuple> lexTupleList;
+                List<LexTuple> lexTupleList = null;
 
                 try {
-                    lexTupleList = lexFile(containedFile);
+                    lexTupleList = Lexer.lexFile(containedFile);
+
+                    // Run analysis on lexTupleList.
+//                    ContentFinder contentFinder = new ContentFinder(lexTupleList);
                 }
                 catch (IOException e) {
-                    System.err.println("NoiseReducer.noiseReduce: IOException thrown by call to lexFile.");
+                    lexTupleList = null;
+                    System.err.println("NoiseReducer.noiseReduce: IOException thrown by call to lexFile when opening file to analyze.");
+                    System.exit(1);
                 }
 
-
+                // Write out the tokens in the list in the identified reason.
+                if (lexTupleList != null) {
+                    BufferedWriter outputWriter;
+                    try {
+                        outputWriter = new BufferedWriter(new FileWriter(outputPath + containedFile.getName()));
+                        for (int i = 0; i < lexTupleList.size(); i++){
+                            outputWriter.write(lexTupleList.get(i).getToken() + "\n");
+                        }
+                        outputWriter.close();
+                    }
+                    catch (IOException e) {
+                        System.err.println("NoiseReducer.noiseReduce: IOException thrown by call to lexFile when opening file to write out to..");
+                        e.printStackTrace();
+                    }
+                }
+                // The lexTupleList was null, meaning that there isn't anything to write out.
+                else {
+                    System.err.println("NoiseReducer.noiseReduce: Lex Tuple list was null.");
+                    System.exit(1);
+                }
             }
         }
 
@@ -60,85 +86,6 @@ public class NoiseReducer {
         outputPath = outPath;
         noiseReduce();
     }
-
-    /**
-     * Called to produce a bitstream from the target file representing tags.
-     * @param targetFile - The file to be parsed.
-     * @return A List of
-     * @throws FileNotFoundException
-     */
-    private List<LexTuple> lexFile(File targetFile) throws IOException {
-        List<LexTuple> lexTuples = new ArrayList<LexTuple>();
-
-        Scanner scanner = new Scanner(targetFile);
-        String token = "";
-
-        FileInputStream inputStream = new FileInputStream(targetFile);
-        char currentChar = 's', prevChar;
-        boolean readingTag = false;
-        int counter = 0;
-
-        while (inputStream.available() > 0) {
-            prevChar = currentChar;
-            currentChar = (char) inputStream.read();
-
-            if (Character.isWhitespace(currentChar)) {
-                if (!readingTag && token != "") {
-//                    System.out.println(token);
-                    lexTuples.add(new LexTuple(token,counter,0));
-                    token = "";
-                }
-            }
-            else {
-                // Start a tag
-                if (currentChar == '<' && prevChar != '\\') {
-                    if (token != "") {
-//                        System.out.println(token);
-                        lexTuples.add(new LexTuple(token,counter,0));
-                        token = "";
-                    }
-                    readingTag = true;
-                }
-                // End a tag.
-                else if (readingTag && currentChar == '>' && prevChar !='\\') {
-                    readingTag = false;
-                    token += currentChar;
-//                    System.out.println(token);
-                    lexTuples.add(new LexTuple(token,counter,1));
-                    token = "";
-                    continue;
-                }
-//                System.out.println(""+currentChar+" - "+token+" - "+readingTag);
-                token += currentChar;
-            }
-
-        }
-
-        // Used to output all of the tokens of the file for debugging purpose.
-        for (LexTuple tuple : lexTuples) {
-            System.out.println(tuple.getToken() + " - " + tuple.getBit());
-        }
-
-        return lexTuples;
-    }
-
-//    /**
-//     * Used to see if a given token is a style opening tag.
-//     * @param token
-//     * @return Boolean value.
-//     */
-//    private boolean isStyleStartTag(String token) {
-//        return token.startsWith("<style ");
-//    }
-//
-//    /**
-//     * Used to see if a given token is a style end tag.
-//     * @param token
-//     * @return Boolean value.
-//     */
-//    private boolean isStyleEndTag(String token) {
-//        return token.equals("</style>");
-//    }
 
     public static void main(String[] args){
         new NoiseReducer();
