@@ -106,6 +106,7 @@ public class Crawler {
                     int statusCode = connection.timeout(5000).execute().statusCode();
                     org.jsoup.nodes.Document doc = connection.get();
 
+
                     /*
                     Connection connection = Jsoup.connect(urlToCrawl.toString()).userAgent("Mozilla");
                     Connection.Response response = connection.timeout(5000).execute();
@@ -120,11 +121,12 @@ public class Crawler {
                     Elements images = doc.select("img[src]");
 
                     //Clean downloaded document with Jsoup Cleaner. Removes images.
-                    //Whitelist whitelist = Whitelist.relaxed();
-                    //whitelist.addTags("all");
-                    //whitelist.removeTags("img");
-                    //Cleaner cleaner = new Cleaner(whitelist);
-                    //doc = cleaner.clean(doc);
+                    Whitelist whitelist = Whitelist.relaxed();
+                    whitelist.addTags("all");
+                    whitelist.removeTags("img");
+                    Cleaner cleaner = new Cleaner(whitelist);
+                    doc = cleaner.clean(doc);
+                    doc.title(title);
                     images.remove();
 
                     //Output title of the page
