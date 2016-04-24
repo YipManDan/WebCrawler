@@ -122,6 +122,24 @@ public class NoiseReducer {
         return lexTuples;
     }
 
+//    /**
+//     * Used to see if a given token is a style opening tag.
+//     * @param token
+//     * @return Boolean value.
+//     */
+//    private boolean isStyleStartTag(String token) {
+//        return token.startsWith("<style ");
+//    }
+//
+//    /**
+//     * Used to see if a given token is a style end tag.
+//     * @param token
+//     * @return Boolean value.
+//     */
+//    private boolean isStyleEndTag(String token) {
+//        return token.equals("</style>");
+//    }
+
     public static void main(String[] args){
         new NoiseReducer();
     }
