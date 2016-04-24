@@ -167,12 +167,16 @@ public class Crawler {
 
                     // Schedule a timer to remove that element from the list after a delay
                     // so that we can eventually go back to that host.
-                    int accessDelay = 5000;
+
+                    int defaultCrawlDelay = 5000;
                     Timer t = new Timer();
                     Remover_Task removerTask = new Remover_Task();
                     removerTask.setHostToRemove(urlToCrawl.getHost());
                     System.out.println("Scheduling timer to remove " + urlToCrawl.getHost() + ".");
-                    t.schedule(removerTask, accessDelay);
+                    if (robotsChecker.crawlDelay == -1)
+                        t.schedule(removerTask, defaultCrawlDelay);
+                    else
+                        t.schedule(removerTask, robotsChecker.crawlDelay * 1000);
 
                     // Figure out a name for the file.
                     String filename = urlToCrawl.getHost().toString() + ".html";
