@@ -106,6 +106,7 @@ public class Crawler {
                     int statusCode = connection.timeout(5000).execute().statusCode();
                     org.jsoup.nodes.Document doc = connection.get();
 
+
                     /*
                     Connection connection = Jsoup.connect(urlToCrawl.toString()).userAgent("Mozilla");
                     Connection.Response response = connection.timeout(5000).execute();
@@ -120,11 +121,12 @@ public class Crawler {
                     Elements images = doc.select("img[src]");
 
                     //Clean downloaded document with Jsoup Cleaner. Removes images.
-                    //Whitelist whitelist = Whitelist.relaxed();
-                    //whitelist.addTags("all");
-                    //whitelist.removeTags("img");
-                    //Cleaner cleaner = new Cleaner(whitelist);
-                    //doc = cleaner.clean(doc);
+                    Whitelist whitelist = Whitelist.relaxed();
+                    whitelist.addTags("all");
+                    whitelist.removeTags("img");
+                    Cleaner cleaner = new Cleaner(whitelist);
+                    doc = cleaner.clean(doc);
+                    doc.title(title);
                     images.remove();
 
                     //Output title of the page
@@ -173,22 +175,22 @@ public class Crawler {
                     t.schedule(removerTask, accessDelay);
 
                     // Figure out a name for the file.
-                    String filename = outputPath + urlToCrawl.getHost().toString() + ".html";
+                    String filename = urlToCrawl.getHost().toString() + ".html";
                     int nameAttemptCounter = 1;
-                    while (fileNamesUsed.contains(filename)) {
-                        filename = outputPath + urlToCrawl.getHost().toString() + nameAttemptCounter + ".html";
+                    while (fileNamesUsed.contains(outputPath + filename)) {
+                        filename = urlToCrawl.getHost().toString() + nameAttemptCounter + ".html";
                         nameAttemptCounter++;
                     }
-                    fileNamesUsed.add(filename);
+                    fileNamesUsed.add(outputPath + filename);
                     System.out.println("Saving file: " + filename);
 
                     try{
                         bufferedWriter.write("<tr>\n\t\t<td><a href=\"" + urlToCrawl + "\">" + title + "</a></td>\n" +
-                                "\t\t<td><a href=\"" + filename + "\">" + urlToCrawl.getHost().toString()+nameAttemptCounter + ".html</a></td>\n" +
+                                "\t\t<td><a href=\"" + outputPath + filename + "\">" + filename + "</a></td>\n" +
                                 "\t\t<td>" + statusCode + "</td>\n" +
                                 "\t\t<td>" + links.size() + "</td>\n" +
                                 "\t\t<td>" + images.size() + "</td>\n" +
-                                "\t</tr>");
+                                "\t</tr>\n");
                     }
                     catch (IOException e){
                         System.err.println("IOException writing to HTML file: " + title + " " + e.getMessage());
