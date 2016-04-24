@@ -96,7 +96,7 @@ public class Crawler {
 
                 // Check the robots.txt file to see if the host disallows this URL to be accessed.
 
-                // DO THAT HERE!
+                RobotsChecker robotsChecker = new RobotsChecker(urlToCrawl);
 
                 /* At this point we are ready to get the page. */
 
