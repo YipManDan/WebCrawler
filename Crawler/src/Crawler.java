@@ -175,22 +175,22 @@ public class Crawler {
                     t.schedule(removerTask, accessDelay);
 
                     // Figure out a name for the file.
-                    String filename = outputPath + urlToCrawl.getHost().toString() + ".html";
+                    String filename = urlToCrawl.getHost().toString() + ".html";
                     int nameAttemptCounter = 1;
-                    while (fileNamesUsed.contains(filename)) {
-                        filename = outputPath + urlToCrawl.getHost().toString() + nameAttemptCounter + ".html";
+                    while (fileNamesUsed.contains(outputPath + filename)) {
+                        filename = urlToCrawl.getHost().toString() + nameAttemptCounter + ".html";
                         nameAttemptCounter++;
                     }
-                    fileNamesUsed.add(filename);
+                    fileNamesUsed.add(outputPath + filename);
                     System.out.println("Saving file: " + filename);
 
                     try{
                         bufferedWriter.write("<tr>\n\t\t<td><a href=\"" + urlToCrawl + "\">" + title + "</a></td>\n" +
-                                "\t\t<td><a href=\"" + filename + "\">" + urlToCrawl.getHost().toString()+nameAttemptCounter + ".html</a></td>\n" +
+                                "\t\t<td><a href=\"" + outputPath + filename + "\">" + filename + "</a></td>\n" +
                                 "\t\t<td>" + statusCode + "</td>\n" +
                                 "\t\t<td>" + links.size() + "</td>\n" +
                                 "\t\t<td>" + images.size() + "</td>\n" +
-                                "\t</tr>");
+                                "\t</tr>\n");
                     }
                     catch (IOException e){
                         System.err.println("IOException writing to HTML file: " + title + " " + e.getMessage());
