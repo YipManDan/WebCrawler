@@ -58,7 +58,9 @@ public class NoiseReducer {
 
                         outputWriter = new BufferedWriter(new FileWriter(outputPath + containedFile.getName()));
                         for (int i = contentFinder.lowPosition; i <= contentFinder.highPosition; i++){
-                            outputWriter.write(lexTupleList.get(i).getToken() + "\n");
+                            LexTuple lexTuple = lexTupleList.get(i);
+//                            if (lexTuple.getBit() != 1)
+                                outputWriter.write(lexTupleList.get(i).getToken() + "\n");
                         }
                         outputWriter.close();
                     }

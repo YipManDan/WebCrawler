@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,10 +18,14 @@ public class RobotsChecker {
     private BufferedReader bufferedReader;
     private String line, userAgent;
     private String[] parsedLine;
-    List<URL> disallowedURLs;
+
+    protected List<URL> disallowedURLs;
+    protected int crawlDelay;
 
     RobotsChecker(URL url){
         this.url = url;
+        crawlDelay = -1;
+        disallowedURLs = new ArrayList<URL>();
 
         try{
 
@@ -36,15 +41,20 @@ public class RobotsChecker {
         try {
             while ((line = bufferedReader.readLine()) != null) {
                 System.out.println(line);
-                if (line.contains("User-agent:")) {
+                if (line.length() == 0)
+                    continue;
+                else if (line.contains("User-agent:")) {
                     parsedLine = line.split(" ");
                     userAgent = parsedLine[1];
                     System.out.println("User-agent is: " + userAgent);
-                } else if (line.length() == 0)
-                    continue;
+                }
                 else if (userAgent.equals("*")) {
                     parsedLine = line.split(" ");
-                    disallowedURLs.add(new URL(url.getHost() + parsedLine[1]));
+                    String lineStart = parsedLine[0];
+                    if (lineStart.toLowerCase().startsWith("crawl-delay"))
+                        crawlDelay = Integer.parseInt(parsedLine[1]);
+                    else if (parsedLine[0].toLowerCase().startsWith("disallow"))
+                        disallowedURLs.add(new URL(url.getHost() + parsedLine[1]));
                 }
 
             }
