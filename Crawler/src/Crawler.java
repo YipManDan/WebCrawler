@@ -98,7 +98,7 @@ public class Crawler {
                 // Check the robots.txt file to see if the host disallows this URL to be accessed.
 
                 RobotsChecker robotsChecker = new RobotsChecker(urlToCrawl);
-                robotsChecker.getDisallowList();
+//                robotsChecker.getDisallowList();
                 if(!robotsChecker.isAllowed(urlToCrawl)) {
                     //This host has disallowed access to this URL
                     //Continue on without accessing the page
@@ -146,7 +146,7 @@ public class Crawler {
 
                     for(Element link: links) {
                         String linkString = link.attr("abs:href");
-                        System.out.println("Saving URL: " + linkString);
+//                        System.out.println("Saving URL: " + linkString);
                         if(linkString.length() == 0)
                             continue;
                         URL urlToQueue = new URL(linkString);
@@ -290,8 +290,10 @@ public class Crawler {
         // Create Spiders and make them run.
         for (int i = 0; i < numberOfSpiders; i++) {
             Spider spider = new Spider(i);
+            System.out.println("Spawning spider " + i);
             spiders.add(spider);
-            spider.crawl();
+//            spider.crawl();
+            spider.spiderThread.start();
         }
 
         //Wait for all of the spiders to finish their work.
