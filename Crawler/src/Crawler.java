@@ -99,7 +99,13 @@ public class Crawler {
 
                 RobotsChecker robotsChecker = new RobotsChecker(urlToCrawl);
                 robotsChecker.getDisallowList();
-                //test URL
+                if(!robotsChecker.isAllowed(urlToCrawl)) {
+                    //This host has disallowed access to this URL
+                    //Continue on without accessing the page
+                    System.out.println("URL is disallowed: " + urlToCrawl.toString());
+                    continue;
+                }
+                //test URLs
                 try {
                     System.out.println(robotsChecker.isAllowed(new URL("http://www.foodnetwork.com/content/")));
                     System.out.println(robotsChecker.isAllowed(new URL("http://www.foodnetwork.com/shows.html")));
@@ -118,6 +124,7 @@ public class Crawler {
 
 
                     /*
+                    //Alternate method to get statuscode and document
                     Connection connection = Jsoup.connect(urlToCrawl.toString()).userAgent("Mozilla");
                     Connection.Response response = connection.timeout(5000).execute();
                     Document doc = Jsoup.parse(response.body());
