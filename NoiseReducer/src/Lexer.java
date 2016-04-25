@@ -10,13 +10,7 @@ import java.util.Scanner;
  * Created by JHarder on 4/24/16.
  */
 public final class Lexer {
-    protected List<LexTuple> lexTuples;
-    private String currentToken;
-    private int counter;
-
-    public Lexer() {
-        lexTuples = null;
-    }
+    private Lexer() {}
 
     /**
      * Called to produce a bitstream from the target file representing tags.
@@ -24,31 +18,36 @@ public final class Lexer {
      * @return A List of
      * @throws FileNotFoundException
      */
-    public List<LexTuple> lexFile(File targetFile) throws IOException {
+    static public List<LexTuple> lexFile(File targetFile) throws IOException {
+        List<LexTuple> lexTuples = new ArrayList<LexTuple>();
+
         Scanner scanner = new Scanner(targetFile);
-        lexTuples = new ArrayList<LexTuple>();
-        currentToken = "";
-        counter = 0;
+        String token = "";
 
         FileInputStream inputStream = new FileInputStream(targetFile);
         char currentChar = 's', prevChar;
         boolean readingTag = false;
+        int counter = 0;
 
         while (inputStream.available() > 0) {
             prevChar = currentChar;
             currentChar = (char) inputStream.read();
 
             if (Character.isWhitespace(currentChar)) {
-                if (!readingTag && currentToken != "") {
-                    addToken();
+                if (!readingTag && token != "") {
+//                    System.out.println(token);
+                    lexTuples.add(new LexTuple(token,counter,0));
+                    token = "";
                     counter++;
                 }
             }
             else {
                 // Start a tag
                 if (currentChar == '<' && prevChar != '\\') {
-                    if (currentToken != "") {
-                        addToken();
+                    if (token != "") {
+//                        System.out.println(token);
+                        lexTuples.add(new LexTuple(token,counter,0));
+                        token = "";
                         counter++;
                     }
                     readingTag = true;
@@ -56,12 +55,15 @@ public final class Lexer {
                 // End a tag.
                 else if (readingTag && currentChar == '>' && prevChar !='\\') {
                     readingTag = false;
-                    currentToken += currentChar;
-                    addToken();
+                    token += currentChar;
+//                    System.out.println(token);
+                    lexTuples.add(new LexTuple(token,counter,1));
+                    token = "";
+                    counter++;
                     continue;
                 }
-//                System.out.println(""+currentChar+" - "+currentToken+" - "+readingTag);
-                currentToken += currentChar;
+//                System.out.println(""+currentChar+" - "+token+" - "+readingTag);
+                token += currentChar;
             }
 
         }
@@ -76,19 +78,8 @@ public final class Lexer {
         return lexTuples;
     }
 
-    private void addToken() {
-        // Before adding, remove punctuation.
-        currentToken = currentToken.replace(",","");
-        currentToken = currentToken.replace(".","");
-//        currentToken = currentToken.replace("\"","");
-
-        lexTuples.add(new LexTuple(currentToken,counter,1));
-        currentToken = "";
-        counter++;
-    }
-
     /**
-     * Used to see if a given currentToken is a style opening tag.
+     * Used to see if a given token is a style opening tag.
      * @param token
      * @return Boolean value.
      */
@@ -97,7 +88,7 @@ public final class Lexer {
     }
 
     /**
-     * Used to see if a given currentToken is a style end tag.
+     * Used to see if a given token is a style end tag.
      * @param token
      * @return Boolean value.
      */

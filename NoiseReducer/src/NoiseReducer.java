@@ -40,26 +40,26 @@ public class NoiseReducer {
                 if (!extension.equals("html"))
                     continue;
 
-                Lexer lexer = new Lexer();
+                List<LexTuple> lexTuples = new ArrayList<LexTuple>();
 
                 try {
-                    lexer.lexFile(containedFile);
+                    Lexer.lexFile(containedFile);
 
                     // Run analysis on lexTupleList.
-                    ContentFinder contentFinder = new ContentFinder(lexer.lexTuples);
+                    ContentFinder contentFinder = new ContentFinder(lexTuples);
 
-//                    System.out.println("Content Finder finished.");
-//                    System.out.println("Lower position: "+contentFinder.lowPosition);
-//                    System.out.println("High position: "+contentFinder.highPosition);
+                    System.out.println("Content Finder finished.");
+                    System.out.println("Lower position: "+contentFinder.lowPosition);
+                    System.out.println("High position: "+contentFinder.highPosition);
 
                     // Write out the tokens in the list in the identified reason.
-                    if (lexer.lexTuples != null) {
+                    if (lexTuples != null) {
                         boolean firstLine = true;
                         BufferedWriter outputWriter;
 
                         outputWriter = new BufferedWriter(new FileWriter(outputPath + containedFile.getName()));
                         for (int i = contentFinder.lowPosition; i <= contentFinder.highPosition; i++){
-                            LexTuple lexTuple = lexer.lexTuples.get(i);
+                            LexTuple lexTuple = lexTuples.get(i);
                             if (lexTuple.getBit() != 1) {
                                 if (firstLine)
                                     firstLine = false;
@@ -78,7 +78,7 @@ public class NoiseReducer {
                     }
                 }
                 catch (IOException e) {
-                    lexer.lexTuples = null;
+                    lexTuples = null;
                     System.err.println("NoiseReducer.noiseReduce: IOException thrown by call to lexFile.");
                     System.err.println(e.getMessage());
                     System.exit(1);
