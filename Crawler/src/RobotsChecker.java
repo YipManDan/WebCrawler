@@ -35,7 +35,7 @@ public class RobotsChecker {
     }
 
     protected void getDisallowList(){
-        String disallowedURL = "";
+        String disallowedURL;
         try {
             while ((line = bufferedReader.readLine()) != null) {
                 System.out.println(line);
@@ -56,7 +56,6 @@ public class RobotsChecker {
                         System.out.println("Disallowed: " + disallowedURL);
                         disallowedURLs.add(new URL("http://" + url.getHost() + disallowedURL));
                     }
-
                 }
 
             }

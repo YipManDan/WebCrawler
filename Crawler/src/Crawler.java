@@ -105,14 +105,6 @@ public class Crawler {
                     System.out.println("URL is disallowed: " + urlToCrawl.toString());
                     continue;
                 }
-                //test URLs
-                try {
-                    System.out.println(robotsChecker.isAllowed(new URL("http://www.foodnetwork.com/content/")));
-                    System.out.println(robotsChecker.isAllowed(new URL("http://www.foodnetwork.com/shows.html")));
-                    System.out.println(robotsChecker.isAllowed(new URL("http://www.foodnetwork.com/recipes/giada-de-laurentiis/strawberry-cream-parfaits-recipe.print.html")));
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                }
 
                 /* At this point we are ready to get the page. */
 
@@ -192,8 +184,10 @@ public class Crawler {
                     System.out.println("Scheduling timer to remove " + urlToCrawl.getHost() + ".");
                     if (robotsChecker.crawlDelay == -1)
                         t.schedule(removerTask, defaultCrawlDelay);
-                    else
+                    else {
                         t.schedule(removerTask, robotsChecker.crawlDelay * 1000);
+                        System.out.println("Timer has an updated crawl delay: " + robotsChecker.crawlDelay*1000 + "sec");
+                    }
 
                     // Figure out a name for the file.
                     String filename = urlToCrawl.getHost().toString() + ".html";
