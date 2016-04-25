@@ -11,7 +11,7 @@ public class ContentFinder {
     /**
      * Constructor for ContentFinder. Takes in a list of parsetuples which should represent
      * a document. The method findContent will then indicate where the relevant content is most likely located.
-     * @param lexTuples   List of parsetuples representing binary bits for a document where 1 represents a tag token and 0 a non-tag token.
+     * @param lexTuples   List of parsetuples representing binary bits for a document where 1 represents a tag currentToken and 0 a non-tag currentToken.
      */
     ContentFinder(List<LexTuple> lexTuples){
         this.lexTuples = lexTuples;
@@ -24,7 +24,7 @@ public class ContentFinder {
     /**
      * Loops through list of parsetuples and finds the range (mid)
      * with a high chance of being content.
-     * Maximizing tag/token ratio above and below mid while minimizing tag/token ratio in the mid-range.
+     * Maximizing tag/currentToken ratio above and below mid while minimizing tag/currentToken ratio in the mid-range.
      */
     void findContent(){
         //indexes
