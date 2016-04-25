@@ -40,10 +40,10 @@ public class NoiseReducer {
                 if (!extension.equals("html"))
                     continue;
 
-                List<LexTuple> lexTuples = new ArrayList<LexTuple>();
+                List<LexTuple> lexTuples;
 
                 try {
-                    Lexer.lexFile(containedFile);
+                    lexTuples = Lexer.lexFile(containedFile);
 
                     // Run analysis on lexTupleList.
                     ContentFinder contentFinder = new ContentFinder(lexTuples);
