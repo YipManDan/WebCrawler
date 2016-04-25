@@ -6,6 +6,7 @@ import org.jsoup.safety.Whitelist;
 import org.jsoup.select.Elements;
 
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.*;
@@ -97,6 +98,15 @@ public class Crawler {
                 // Check the robots.txt file to see if the host disallows this URL to be accessed.
 
                 RobotsChecker robotsChecker = new RobotsChecker(urlToCrawl);
+                robotsChecker.getDisallowList();
+                //test URL
+                try {
+                    System.out.println(robotsChecker.isAllowed(new URL("http://www.foodnetwork.com/content/")));
+                    System.out.println(robotsChecker.isAllowed(new URL("http://www.foodnetwork.com/shows.html")));
+                    System.out.println(robotsChecker.isAllowed(new URL("http://www.foodnetwork.com/recipes/giada-de-laurentiis/strawberry-cream-parfaits-recipe.print.html")));
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
 
                 /* At this point we are ready to get the page. */
 
