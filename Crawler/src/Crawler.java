@@ -196,7 +196,7 @@ public class Crawler {
                         System.err.println("IOException writing to HTML file: " + title + " " + e.getMessage());
                     }
 
-                    Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), "UTF-8"));
+                    Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputPath + filename), "UTF-8"));
                     try{
                         out.write(doc.outerHtml());
                     }
