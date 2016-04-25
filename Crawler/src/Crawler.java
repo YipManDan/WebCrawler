@@ -182,6 +182,7 @@ public class Crawler {
                     Remover_Task removerTask = new Remover_Task();
                     removerTask.setHostToRemove(urlToCrawl.getHost());
                     System.out.println("Scheduling timer to remove " + urlToCrawl.getHost() + ".");
+
                     if (robotsChecker.crawlDelay == -1)
                         t.schedule(removerTask, defaultCrawlDelay);
                     else {

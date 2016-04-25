@@ -71,9 +71,9 @@ public final class Lexer {
         inputStream.close();
 
         // Used to output all of the tokens of the file for debugging.
-        for (LexTuple tuple : lexTuples) {
-            System.out.println(tuple.getToken() + " - " + tuple.getPosition() +  " - " + tuple.getBit());
-        }
+//        for (LexTuple tuple : lexTuples) {
+//            System.out.println(tuple.getToken() + " - " + tuple.getPosition() +  " - " + tuple.getBit());
+//        }
 
         return lexTuples;
     }
