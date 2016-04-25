@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,22 +21,31 @@ public class RobotsChecker {
     protected int crawlDelay;
 
     RobotsChecker(URL url){
-        this.url = url;
+        try {
+            this.url = new URL(url.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
         crawlDelay = -1;
         disallowedURLs = new ArrayList<URL>();
+        String robotURL = "http://" + url.getHost() + "/robots.txt";
 
         try{
-
-            inputStream = (new URL("http://" + url.getHost() + "/robots.txt")).openStream();
+            System.out.println("Accessing: " + robotURL);
+            inputStream = (new URL(robotURL)).openStream();
             bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
         }
         catch (Exception e){
             System.err.println("Exception at Robots.txt: " + e);
+            return;
         }
+
+        getDisallowList();
     }
 
     protected void getDisallowList(){
         String disallowedURL;
+        userAgent = "";
         try {
             while ((line = bufferedReader.readLine()) != null) {
                 System.out.println(line);
@@ -44,7 +54,7 @@ public class RobotsChecker {
                 else if (line.contains("User-agent:")) {
                     parsedLine = line.split(" ");
                     userAgent = parsedLine[1];
-                    System.out.println("User-agent is: " + userAgent);
+//                    System.out.println("User-agent is: " + userAgent);
                 }
                 else if (userAgent.equals("*")) {
                     parsedLine = line.split(" ");
@@ -53,15 +63,17 @@ public class RobotsChecker {
                         crawlDelay = Integer.parseInt(parsedLine[1]);
                     else if (parsedLine[0].toLowerCase().startsWith("disallow")) {
                         disallowedURL = prepareURL(parsedLine[1]);
-                        System.out.println("Disallowed: " + disallowedURL);
-                        disallowedURLs.add(new URL("http://" + url.getHost() + disallowedURL));
+//                        System.out.println("Disallowed: " + disallowedURL);
+                            disallowedURLs.add(new URL("http://" + url.getHost() + disallowedURL));
                     }
                 }
-
             }
+
+            bufferedReader.close();
         }
         catch (Exception e){
-            System.err.println("Exception at getDisallowList: " + e);
+            System.err.println("Exception at getDisallowList: ");
+            e.printStackTrace();
         }
 
         System.out.printf("Disallowed List:");
