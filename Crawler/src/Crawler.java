@@ -152,7 +152,7 @@ public class Crawler {
                     images.remove();
 
                     //Output title of the page
-                    System.out.println("Spider " + spiderID + " downloaded: " + urlToCrawl);
+                    System.out.println("");
                     System.out.println("Spider " + spiderID + " downloaded: " + title.toString() + " " + urlToCrawl);
 
                     Elements links = doc.select("a");
@@ -182,7 +182,7 @@ public class Crawler {
                         public void setHostToRemove(String urlHost) {urlHostToRemove = urlHost;}
 
                         @Override public void run() {
-                            System.out.println("Removing "+urlHostToRemove+".");
+                            System.out.println("Removing "+urlHostToRemove+" from list of recently accessed hosts.");
                             recentlyAccessedURLHosts.remove(urlHostToRemove);
                         }
                     }
