@@ -237,7 +237,7 @@ public class Crawler {
     // Data
     protected File csvFile;
     protected String outputPath;
-    protected int numberOfSpiders = 1;
+    protected int numberOfSpiders = 20;
     //    protected int numberOfQueues;
     private ThreadSafeInt numPagesCrawled;
     private Set<String> recentlyAccessedURLHosts;   // For the URLs that should not be crawled again yet.

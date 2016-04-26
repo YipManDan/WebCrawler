@@ -1,3 +1,5 @@
+import jdk.nashorn.internal.runtime.regexp.joni.Regex;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -36,11 +38,11 @@ public final class Lexer {
             if (Character.isWhitespace(currentChar)) {
                 if (!readingTag && token != "") {
 //                    System.out.println(token);
-                    token = token.replace(".","");
-                    token = token.replace(",","");
-                    token = token.replace("\"","");
-                    lexTuples.add(new LexTuple(token,counter,0));
-                    token = "";
+                    token = token.replaceAll("[^a-zA-z0-9]","");
+                    if (token != "") {
+                        lexTuples.add(new LexTuple(token,counter,0));
+                        token = "";
+                    }
                     counter++;
                 }
             }
@@ -49,11 +51,11 @@ public final class Lexer {
                 if (currentChar == '<' && prevChar != '\\') {
                     if (token != "") {
 //                        System.out.println(token);
-                        token = token.replace(".","");
-                        token = token.replace(",","");
-                        token = token.replace("\"","");
-                        lexTuples.add(new LexTuple(token,counter,0));
-                        token = "";
+                        token = token.replaceAll("[^a-zA-z0-9]","");
+                        if (token != "") {
+                            lexTuples.add(new LexTuple(token,counter,0));
+                            token = "";
+                        }
                         counter++;
                     }
                     readingTag = true;
