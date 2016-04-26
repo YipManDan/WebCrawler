@@ -10,6 +10,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -99,6 +100,7 @@ public class Crawler {
                     }
                 }
 
+                // We now know we have a URL.
                 hasSlept = false;
                 numPagesCrawled.increment();
 
@@ -125,10 +127,18 @@ public class Crawler {
                     continue;
                 }
 
+                RobotsChecker robotsChecker;
+                // Check if we have already got this robot
+                if (robots.containsKey(urlToCrawl.getHost())) {
+                    // We already got this robot.
+                    robotsChecker = robots.get(urlToCrawl.getHost());
+                } else {
+                    // We have not gotten this robot before.
+                    robotsChecker = new RobotsChecker(urlToCrawl);
+                    robots.put(urlToCrawl.getHost(),robotsChecker);
+                }
+
                 // Check the robots.txt file to see if the host disallows this URL to be accessed.
-                System.out.print("\nSpider " + spiderID + " ");
-                RobotsChecker robotsChecker = new RobotsChecker(urlToCrawl);
-//                robotsChecker.getDisallowList();
                 if(!robotsChecker.isAllowed(urlToCrawl)) {
                     //This host has disallowed access to this URL
                     //Continue on without accessing the page
@@ -285,6 +295,7 @@ public class Crawler {
     private Queue<URL> URLs_to_crawl;           // For the URLs scraped and queued but not yet crawled
     private Set<String> URLs_not_to_crawl;          // For the URLs already crawled.
     private Set<String> fileNamesUsed;
+    private ConcurrentHashMap<String, RobotsChecker> robots;
 
     // Contained Classes
     private FileInterface fileInterface;
@@ -299,6 +310,7 @@ public class Crawler {
         URLs_to_crawl = new ConcurrentLinkedQueue<URL>();
         URLs_not_to_crawl = new ConcurrentSkipListSet<String>();
         fileNamesUsed = new ConcurrentSkipListSet<String>();
+        robots = new ConcurrentHashMap<String, RobotsChecker>();
 
         fileInterface = new FileInterface(this);
 
