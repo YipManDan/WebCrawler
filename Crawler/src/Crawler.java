@@ -45,6 +45,8 @@ public class Crawler {
         public int sleepTime = 3000;
         public CrawlExitMessage exitMessage;
 
+        private int defaultCrawlDelay = 5000;
+
         Spider(int ID) {
             spiderID = ID;
             spiderThread = new Thread(this, "Spider Thread " + String.valueOf(spiderID));
@@ -119,16 +121,8 @@ public class Crawler {
                     continue;
                 }
 
-                // Check to see if this host has been accessed recently.
-                if (recentlyAccessedURLHosts.contains(urlToCrawl.getHost())) {
-                    // This host has been accessed recently.
-                    // Place back in queue to wait till later and try a different URL.
-                    URLs_to_crawl.add(urlToCrawl);
-                    numPagesCrawled.decrement();
-                    continue;
-                }
-
                 RobotsChecker robotsChecker;
+
                 // Check if we have already got this robot
                 if (robots.containsKey(urlToCrawl.getHost())) {
                     // We already got this robot.
@@ -147,15 +141,24 @@ public class Crawler {
                     numPagesCrawled.decrement();
                     continue;
                 }
+
+                // Check to see if this host has been accessed recently.
+                if (recentlyAccessedURLHosts.contains(urlToCrawl.getHost())) {
+                    // This host has been accessed recently.
+                    // Place back in queue to wait till later and try a different URL.
+                    URLs_to_crawl.add(urlToCrawl);
+                    numPagesCrawled.decrement();
+                    continue;
+                }
 //                //TODO:This is duplicated on purpose at this point. I think we should check before we get robot & after as well
-//                // Check to see if this host has been accessed recently.
-//                if (recentlyAccessedURLHosts.contains(urlToCrawl.getHost())) {
-//                    // This host has been accessed recently.
-//                    // Place back in queue to wait till later and try a different URL.
-//                    URLs_to_crawl.add(urlToCrawl);
-//                    numPagesCrawled.decrement();
-//                    continue;
-//                }
+                // Check to see if this host has been accessed recently.
+                if (recentlyAccessedURLHosts.contains(urlToCrawl.getHost())) {
+                    // This host has been accessed recently.
+                    // Place back in queue to wait till later and try a different URL.
+                    URLs_to_crawl.add(urlToCrawl);
+                    numPagesCrawled.decrement();
+                    continue;
+                }
 //                //TODO: Decide if this belongs here
 //                // Added the host of the URL we just accessed to a list.
 //                // Use this list to see who not to access again soon.
@@ -270,7 +273,6 @@ public class Crawler {
                     // Schedule a timer to remove that element from the list after a delay
                     // so that we can eventually go back to that host.
 
-                    int defaultCrawlDelay = 5000;
                     Timer t = new Timer();
                     Remover_Task removerTask = new Remover_Task();
                     removerTask.setHostToRemove(urlToCrawl.getHost());
