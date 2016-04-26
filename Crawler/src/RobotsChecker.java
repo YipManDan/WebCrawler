@@ -36,7 +36,7 @@ public class RobotsChecker {
             bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
         }
         catch (Exception e){
-            System.err.println("Exception at Robots.txt: " + e);
+            System.out.println("Exception at Robots.txt: " + e);
             return;
         }
 
@@ -48,7 +48,7 @@ public class RobotsChecker {
         userAgent = "";
         try {
             while ((line = bufferedReader.readLine()) != null) {
-                System.out.println(line);
+//                System.out.println(line);
                 if (line.length() == 0)
                     userAgent = "";
                 else if (line.contains("User-agent:")) {
@@ -76,10 +76,10 @@ public class RobotsChecker {
             e.printStackTrace();
         }
 
-        System.out.printf("Disallowed List:");
-        for (URL url: disallowedURLs) {
-            System.out.println(url);
-        }
+//        System.out.printf("Disallowed List:");
+//        for (URL url: disallowedURLs) {
+//            System.out.println(url);
+//        }
         System.out.println("Done with Disallowed List");
         System.out.println("");
     }

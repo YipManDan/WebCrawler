@@ -61,14 +61,18 @@ public class CSV_Parser {
             csvScanner.useDelimiter(",");
 
             // Read in the seedURL
-            if (csvScanner.hasNext())
+            if (csvScanner.hasNext()) {
                 seedURL = new URL(csvScanner.next());
+                System.out.println("seedURL: " + seedURL.toString());
+            }
             else
                 System.err.println("CSV File Reading Error: Could not read seedURL");
 
             // Read in the number of pages to crawl.
-            if (csvScanner.hasNextInt())
+            if (csvScanner.hasNextInt()) {
                 numberOfPagesToCrawl = csvScanner.nextInt();
+                System.out.println("numberOfPagesToCrawl" + numberOfPagesToCrawl);
+            }
             else
                 System.err.println("CSV File Reading Error: Could not read number of pages to crawl");
 
@@ -76,8 +80,10 @@ public class CSV_Parser {
             if (csvScanner.hasNext()) {
                 try {
                     URLRestriction = new URL(csvScanner.next());
+                    System.out.println("URLRestriction" + URLRestriction.toString());
                 }
                 catch (MalformedURLException e) {
+                    System.out.println("No URLRestriction");
                     URLRestriction = null;
                 }
             }

@@ -51,13 +51,14 @@ public class Crawler {
             System.out.println("Spider " + spiderID + " is crawling.");
 
             boolean hasSlept = false;
+            boolean keepCrawling = true;
 
-            while (numPagesCrawled.val() < numberOfPagesToCrawl()) {
+            while (keepCrawling) {
                 //Get URL to crawl from queue
                 urlToCrawl = URLs_to_crawl.poll();
 
                 // If the queue was empty, either kill self or sleep.
-                if (urlToCrawl == null) {
+                if (urlToCrawl == null || numPagesCrawled.val() >= numberOfPagesToCrawl()) {
                     // Already tried once and slept. Queue is
                     if (numberOfSpiders == 1 || hasSlept)
                         break;
@@ -75,34 +76,40 @@ public class Crawler {
                 }
 
                 hasSlept = false;
+                numPagesCrawled.increment();
 
                 // Check if the URL to crawl has already been crawled.
-                if (URLs_not_to_crawl.contains(urlToCrawl.toString()))
+                if (URLs_not_to_crawl.contains(urlToCrawl.toString())) {
+                    numPagesCrawled.decrement();
                     continue;
+                }
 
                 // If the url we are about to crawl does not match the URL restriction, do not crawl it.
                 if (URLRestriction() != null && !urlToCrawl.toString().startsWith(URLRestriction().toString())) {
                     // Could do this: URLs_not_to_crawl.add(urlToCrawl.toString());
                     // I think that is slower though than just doing the string compare.
+                    numPagesCrawled.decrement();
                     continue;
                 }
 
                 // Check to see if this host has been accessed recently.
                 if (recentlyAccessedURLHosts.contains(urlToCrawl.getHost())) {
-                        // This host has been accessed recently.
-                        // Place back in queue to wait till later and try a different URL.
-                        URLs_to_crawl.add(urlToCrawl);
-                        continue;
+                    // This host has been accessed recently.
+                    // Place back in queue to wait till later and try a different URL.
+                    URLs_to_crawl.add(urlToCrawl);
+                    numPagesCrawled.decrement();
+                    continue;
                 }
 
                 // Check the robots.txt file to see if the host disallows this URL to be accessed.
-
+                System.out.print("\nSpider " + spiderID + " ");
                 RobotsChecker robotsChecker = new RobotsChecker(urlToCrawl);
 //                robotsChecker.getDisallowList();
                 if(!robotsChecker.isAllowed(urlToCrawl)) {
                     //This host has disallowed access to this URL
                     //Continue on without accessing the page
                     System.out.println("URL is disallowed: " + urlToCrawl.toString());
+                    numPagesCrawled.decrement();
                     continue;
                 }
 
@@ -133,13 +140,19 @@ public class Crawler {
                     Whitelist whitelist = Whitelist.relaxed();
                     whitelist.addTags("all");
                     whitelist.removeTags("img");
+
                     Cleaner cleaner = new Cleaner(whitelist);
                     doc = cleaner.clean(doc);
+
                     doc.title(title);
+                    if(title.length() == 0) {
+                        title = "Untitled";
+                    }
+
                     images.remove();
 
                     //Output title of the page
-                    System.out.println("Spider " + spiderID + " downloaded: " + urlToCrawl);
+                    System.out.println("");
                     System.out.println("Spider " + spiderID + " downloaded: " + title.toString() + " " + urlToCrawl);
 
                     Elements links = doc.select("a");
@@ -155,7 +168,7 @@ public class Crawler {
                     }
 
                     URLs_not_to_crawl.add(urlToCrawl.toString());
-                    numPagesCrawled.increment();
+//                    numPagesCrawled.increment();
 
                     // Added the host of the URL we just accessed to a list.
                     // Use this list to see who not to access again soon.
@@ -169,7 +182,7 @@ public class Crawler {
                         public void setHostToRemove(String urlHost) {urlHostToRemove = urlHost;}
 
                         @Override public void run() {
-                            System.out.println("Removing "+urlHostToRemove+".");
+                            System.out.println("Removing "+urlHostToRemove+" from list of recently accessed hosts.");
                             recentlyAccessedURLHosts.remove(urlHostToRemove);
                         }
                     }
@@ -201,7 +214,9 @@ public class Crawler {
                     System.out.println("Saving file: " + filename);
 
                     try{
-                        bufferedWriter.write("<tr>\n\t\t<td><a href=\"" + urlToCrawl + "\">" + title + "</a></td>\n" +
+                        tableRowNumber.increment();
+                        bufferedWriter.write("<tr>\n\t\t<td>" + tableRowNumber.val() + "</td>\n" + "" +
+                                "\t\t<td><a href=\"" + urlToCrawl + "\">" + title + "</a></td>\n" +
                                 "\t\t<td><a href=\"" + outputPath + filename + "\">" + filename + "</a></td>\n" +
                                 "\t\t<td>" + statusCode + "</td>\n" +
                                 "\t\t<td>" + links.size() + "</td>\n" +
@@ -222,6 +237,7 @@ public class Crawler {
                 }
                 catch (IOException e){
                     System.err.println("IOException for Spider " + spiderID + ": " + e.toString());
+                    numPagesCrawled.decrement();
                 }
 
                 System.out.println("Number of pages crawled: "+numPagesCrawled);
@@ -237,9 +253,10 @@ public class Crawler {
     // Data
     protected File csvFile;
     protected String outputPath;
-    protected int numberOfSpiders = 20;
+    protected int numberOfSpiders = 3;
     //    protected int numberOfQueues;
     private ThreadSafeInt numPagesCrawled;
+    private ThreadSafeInt tableRowNumber;
     private Set<String> recentlyAccessedURLHosts;   // For the URLs that should not be crawled again yet.
     private Queue<URL> URLs_to_crawl;           // For the URLs scraped and queued but not yet crawled
     private Set<String> URLs_not_to_crawl;          // For the URLs already crawled.
@@ -253,6 +270,7 @@ public class Crawler {
 
     Crawler () {
         numPagesCrawled = new ThreadSafeInt(0);
+        tableRowNumber = new ThreadSafeInt(0);
         recentlyAccessedURLHosts = new ConcurrentSkipListSet<String>();
         URLs_to_crawl = new ConcurrentLinkedQueue<URL>();
         URLs_not_to_crawl = new ConcurrentSkipListSet<String>();
@@ -279,7 +297,7 @@ public class Crawler {
         try {
             bufferedWriter = new BufferedWriter(new FileWriter(outputPath + "report.html"));
             bufferedWriter.write("<!doctype html>\n<html>\n<head>\n\t<title>Report</title>\n</head>\n");
-            bufferedWriter.write("<body>\n\t<table border=\"1\">\n\t<tr>\n\t\t<th>Title</th>\n\t\t<th>Document Location</th>\n\t\t<th>HTTP Status Code</th>\n" +
+            bufferedWriter.write("<body>\n\t<table border=\"1\">\n\t<tr>\n\t\t<th>Item #</th>\n\t\t<th>Title</th>\n\t\t<th>Document Location</th>\n\t\t<th>HTTP Status Code</th>\n" +
                     "\t\t<th>Number of Outlinks</th>\n\t\t<th>Number of Images</th>\n\t</tr>");
         }
         catch (IOException e){
