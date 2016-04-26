@@ -96,6 +96,11 @@ public class NoiseReducer {
         noiseReduce();
     }
 
+    protected void endProgram(){
+        System.out.println("Closing Sequence");
+        System.exit(1);
+    }
+
     public static void main(String[] args){
         new NoiseReducer();
     }
