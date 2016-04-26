@@ -24,15 +24,6 @@ import java.util.concurrent.ConcurrentSkipListSet;
  */
 public class Crawler {
     /**
-     * Exit message options for the spider.
-     */
-    enum CrawlExitMessage {
-        NOT_SET,
-        LIMIT_REACHED,
-        EMPTY_QUEUE
-    }
-
-    /**
      * The spider class that the Crawler class uses to perform the actual web crawling.
      *
      * @author  Daniel Yeh and Jesse Harder
@@ -43,14 +34,12 @@ public class Crawler {
         public int spiderID;
         public Thread spiderThread;
         public int sleepTime = 3000;
-        public CrawlExitMessage exitMessage;
 
         private int defaultCrawlDelay = 5000;
 
         Spider(int ID) {
             spiderID = ID;
             spiderThread = new Thread(this, "Spider Thread " + String.valueOf(spiderID));
-            exitMessage = CrawlExitMessage.NOT_SET;
         }
 
         /**
@@ -63,23 +52,25 @@ public class Crawler {
 
             boolean hasSlept = false;
             boolean keepCrawling = true;
+            int numPagesCrawledDuringCheck;
 
             while (keepCrawling) {
                 //Get URL to crawl from queue
                 urlToCrawl = URLs_to_crawl.poll();
 
                 boolean needToSleep = false;
-                exitMessage = CrawlExitMessage.NOT_SET;
+
+                numPagesCrawledDuringCheck = numPagesCrawled.getValAndIncrement();
 
                 // If the queue was empty or the crawl limit has been reached.
                 // Need to either sleep or kill self.
                 if (urlToCrawl == null) {
                     needToSleep = true;
-                    exitMessage = CrawlExitMessage.EMPTY_QUEUE;
+                    numPagesCrawled.decrement();
                 }
-                else if (numPagesCrawled.val() >= numberOfPagesToCrawl()) {
+                else if (numPagesCrawledDuringCheck >= numberOfPagesToCrawl()) {
                     needToSleep = true;
-                    exitMessage = CrawlExitMessage.LIMIT_REACHED;
+                    numPagesCrawled.decrement();
                 }
 
                 if (needToSleep) {
@@ -101,7 +92,6 @@ public class Crawler {
 
                 // We now know we have a URL.
                 hasSlept = false;
-                numPagesCrawled.increment();
 
                 // Check if the URL to crawl has already been crawled.
                 if (URLs_not_to_crawl.contains(urlToCrawl.toString())) {

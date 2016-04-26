@@ -15,6 +15,20 @@ class ThreadSafeInt {
         }
     }
 
+    /* Accessor Mutator */
+
+    public int getValAndIncrement() {
+        return getValAndIncrement(1);
+    }
+
+    public int getValAndIncrement(int amount) {
+        synchronized (this) {
+            int temp = counter;
+            counter++;
+            return temp;
+        }
+    }
+
     /* Mutators */
 
     public void increment() {increment(1);}
