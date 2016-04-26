@@ -140,9 +140,15 @@ public class Crawler {
                     Whitelist whitelist = Whitelist.relaxed();
                     whitelist.addTags("all");
                     whitelist.removeTags("img");
+
                     Cleaner cleaner = new Cleaner(whitelist);
                     doc = cleaner.clean(doc);
+
                     doc.title(title);
+                    if(title.length() == 0) {
+                        title = "Untitled";
+                    }
+
                     images.remove();
 
                     //Output title of the page
