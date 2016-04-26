@@ -150,48 +150,39 @@ public class Crawler {
                     numPagesCrawled.decrement();
                     continue;
                 }
-//                //TODO:This is duplicated on purpose at this point. I think we should check before we get robot & after as well
-                // Check to see if this host has been accessed recently.
-                if (recentlyAccessedURLHosts.contains(urlToCrawl.getHost())) {
-                    // This host has been accessed recently.
-                    // Place back in queue to wait till later and try a different URL.
-                    URLs_to_crawl.add(urlToCrawl);
-                    numPagesCrawled.decrement();
-                    continue;
-                }
+
 //                //TODO: Decide if this belongs here
-//                // Added the host of the URL we just accessed to a list.
-//                // Use this list to see who not to access again soon.
-//                recentlyAccessedURLHosts.add(urlToCrawl.getHost());
-//
-//                /**
-//                 * Inner class extending TimerTask in order to remove elements from the list of recently accessed URLs.
-//                 */
-//                class Remover_Task extends TimerTask {
-//                    String urlHostToRemove;
-//                    public void setHostToRemove(String urlHost) {urlHostToRemove = urlHost;}
-//
-//                    @Override public void run() {
-//                        System.out.println("Removing "+urlHostToRemove+" from list of recently accessed hosts.");
-//                        recentlyAccessedURLHosts.remove(urlHostToRemove);
-//                    }
-//                }
-//
-//                // Schedule a timer to remove that element from the list after a delay
-//                // so that we can eventually go back to that host.
-//
-//                int defaultCrawlDelay = 5000;
-//                Timer t = new Timer();
-//                Remover_Task removerTask = new Remover_Task();
-//                removerTask.setHostToRemove(urlToCrawl.getHost());
-//                System.out.println("Scheduling timer to remove " + urlToCrawl.getHost() + ".");
-//
-//                if (robotsChecker.crawlDelay == -1)
-//                    t.schedule(removerTask, defaultCrawlDelay);
-//                else {
-//                    t.schedule(removerTask, robotsChecker.crawlDelay * 1000);
-//                    System.out.println("Timer has an updated crawl delay: " + robotsChecker.crawlDelay*1000 + "sec");
-//                }
+                // Added the host of the URL we just accessed to a list.
+                // Use this list to see who not to access again soon.
+                recentlyAccessedURLHosts.add(urlToCrawl.getHost());
+
+                /**
+                 * Inner class extending TimerTask in order to remove elements from the list of recently accessed URLs.
+                 */
+                class Remover_Task extends TimerTask {
+                    String urlHostToRemove;
+                    public void setHostToRemove(String urlHost) {urlHostToRemove = urlHost;}
+
+                    @Override public void run() {
+                        System.out.println("Removing "+urlHostToRemove+" from list of recently accessed hosts.");
+                        recentlyAccessedURLHosts.remove(urlHostToRemove);
+                    }
+                }
+
+                // Schedule a timer to remove that element from the list after a delay
+                // so that we can eventually go back to that host.
+
+                Timer t = new Timer();
+                Remover_Task removerTask = new Remover_Task();
+                removerTask.setHostToRemove(urlToCrawl.getHost());
+                System.out.println("Scheduling timer to remove " + urlToCrawl.getHost() + ".");
+
+                if (robotsChecker.crawlDelay == -1)
+                    t.schedule(removerTask, defaultCrawlDelay);
+                else {
+                    t.schedule(removerTask, robotsChecker.crawlDelay * 1000);
+                    System.out.println("Timer has an updated crawl delay: " + robotsChecker.crawlDelay*1000 + "sec");
+                }
 
                 /* At this point we are ready to get the page. */
 
@@ -252,38 +243,6 @@ public class Crawler {
 
                     URLs_not_to_crawl.add(urlToCrawl.toString());
                     numPagesCrawled.increment();
-
-                    // Added the host of the URL we just accessed to a list.
-                    // Use this list to see who not to access again soon.
-                    recentlyAccessedURLHosts.add(urlToCrawl.getHost());
-
-                    /**
-                     * Inner class extending TimerTask in order to remove elements from the list of recently accessed URLs.
-                     */
-                    class Remover_Task extends TimerTask {
-                        String urlHostToRemove;
-                        public void setHostToRemove(String urlHost) {urlHostToRemove = urlHost;}
-
-                        @Override public void run() {
-                            System.out.println("Removing "+urlHostToRemove+" from list of recently accessed hosts.");
-                            recentlyAccessedURLHosts.remove(urlHostToRemove);
-                        }
-                    }
-
-                    // Schedule a timer to remove that element from the list after a delay
-                    // so that we can eventually go back to that host.
-
-                    Timer t = new Timer();
-                    Remover_Task removerTask = new Remover_Task();
-                    removerTask.setHostToRemove(urlToCrawl.getHost());
-                    System.out.println("Scheduling timer to remove " + urlToCrawl.getHost() + ".");
-
-                    if (robotsChecker.crawlDelay == -1)
-                        t.schedule(removerTask, defaultCrawlDelay);
-                    else {
-                        t.schedule(removerTask, robotsChecker.crawlDelay * 1000);
-                        System.out.println("Timer has an updated crawl delay: " + robotsChecker.crawlDelay*1000 + "sec");
-                    }
 
                     // Figure out a name for the file.
                     String filename = urlToCrawl.getHost().toString() + ".html";
