@@ -214,7 +214,9 @@ public class Crawler {
                     System.out.println("Saving file: " + filename);
 
                     try{
-                        bufferedWriter.write("<tr>\n\t\t<td><a href=\"" + urlToCrawl + "\">" + title + "</a></td>\n" +
+                        tableRowNumber.increment();
+                        bufferedWriter.write("<tr>\n\t\t<td>" + tableRowNumber.val() + "</td>\n" + "" +
+                                "\t\t<td><a href=\"" + urlToCrawl + "\">" + title + "</a></td>\n" +
                                 "\t\t<td><a href=\"" + outputPath + filename + "\">" + filename + "</a></td>\n" +
                                 "\t\t<td>" + statusCode + "</td>\n" +
                                 "\t\t<td>" + links.size() + "</td>\n" +
@@ -254,6 +256,7 @@ public class Crawler {
     protected int numberOfSpiders = 3;
     //    protected int numberOfQueues;
     private ThreadSafeInt numPagesCrawled;
+    private ThreadSafeInt tableRowNumber;
     private Set<String> recentlyAccessedURLHosts;   // For the URLs that should not be crawled again yet.
     private Queue<URL> URLs_to_crawl;           // For the URLs scraped and queued but not yet crawled
     private Set<String> URLs_not_to_crawl;          // For the URLs already crawled.
@@ -267,6 +270,7 @@ public class Crawler {
 
     Crawler () {
         numPagesCrawled = new ThreadSafeInt(0);
+        tableRowNumber = new ThreadSafeInt(0);
         recentlyAccessedURLHosts = new ConcurrentSkipListSet<String>();
         URLs_to_crawl = new ConcurrentLinkedQueue<URL>();
         URLs_not_to_crawl = new ConcurrentSkipListSet<String>();
@@ -293,7 +297,7 @@ public class Crawler {
         try {
             bufferedWriter = new BufferedWriter(new FileWriter(outputPath + "report.html"));
             bufferedWriter.write("<!doctype html>\n<html>\n<head>\n\t<title>Report</title>\n</head>\n");
-            bufferedWriter.write("<body>\n\t<table border=\"1\">\n\t<tr>\n\t\t<th>Title</th>\n\t\t<th>Document Location</th>\n\t\t<th>HTTP Status Code</th>\n" +
+            bufferedWriter.write("<body>\n\t<table border=\"1\">\n\t<tr>\n\t\t<th>Item #</th>\n\t\t<th>Title</th>\n\t\t<th>Document Location</th>\n\t\t<th>HTTP Status Code</th>\n" +
                     "\t\t<th>Number of Outlinks</th>\n\t\t<th>Number of Images</th>\n\t</tr>");
         }
         catch (IOException e){
