@@ -53,10 +53,6 @@ public class Crawler {
             exitMessage = CrawlExitMessage.NOT_SET;
         }
 
-        public void crawl() {
-            spiderThread.start();
-        }
-
         /**
          * The main functionality of the Spider goes here.
          */
