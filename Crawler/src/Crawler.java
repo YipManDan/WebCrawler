@@ -242,7 +242,6 @@ public class Crawler {
                     }
 
                     URLs_not_to_crawl.add(urlToCrawl.toString());
-                    numPagesCrawled.increment();
 
                     // Figure out a name for the file.
                     String filename = urlToCrawl.getHost().toString() + ".html";
