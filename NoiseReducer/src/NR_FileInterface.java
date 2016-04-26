@@ -5,12 +5,14 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 
 /**
  * Created by JHarder on 4/21/16.
  */
-public class NR_FileInterface extends JFrame implements ActionListener {
+public class NR_FileInterface extends JFrame implements ActionListener, WindowListener {
     private final JFileChooser inputPathChooser = new JFileChooser();
     private final JFileChooser outputPathChooser = new JFileChooser();
     private final String defaultInputPath = "repository";
@@ -68,6 +70,7 @@ public class NR_FileInterface extends JFrame implements ActionListener {
         this.setPreferredSize(new Dimension(400, 140));
         this.setMinimumSize(new Dimension(400, 140));
         this.setLocationRelativeTo(null);
+        this.addWindowListener(this);
 
         this.setVisible(true);
     }
@@ -134,5 +137,27 @@ public class NR_FileInterface extends JFrame implements ActionListener {
             // Interface is disposed of in the noiseReducer's startCrawl() method.
             return;
         }
+    }
+    @Override
+    public void windowClosing(WindowEvent e) {
+        noiseReducer.endProgram();
+    }
+
+    public void windowClosed(WindowEvent e) {
+    }
+
+    public void windowOpened(WindowEvent e) {
+    }
+
+    public void windowIconified(WindowEvent e) {
+    }
+
+    public void windowDeiconified(WindowEvent e) {
+    }
+
+    public void windowActivated(WindowEvent e) {
+    }
+
+    public void windowDeactivated(WindowEvent e) {
     }
 }
