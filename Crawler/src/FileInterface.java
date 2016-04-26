@@ -24,6 +24,9 @@ public class FileInterface extends JFrame implements ActionListener{
 
     //Textfield to display user's selected filepath
     private JTextField specFile, outputPath;
+    private SpinnerNumberModel spinnerNumberModel;
+    private JSpinner numberOfSpiderField;
+    private int numberOfSpiders = 5;
 
     private JButton openButton, outputPathSelectButton, okButton;
 
@@ -38,10 +41,10 @@ public class FileInterface extends JFrame implements ActionListener{
         fileChooser.setFileFilter(new FileNameExtensionFilter("CSV Files", "csv"));
         pathChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-        JPanel north, south;
+        JPanel north, south, numberPanel;
 
         //North panel contains text field displaying selected file path
-        north = new JPanel(new GridLayout(2,1));
+        north = new JPanel(new GridLayout(3,1));
 
         specFile = new JTextField();
         specFile.setText("Select a file: ");
@@ -54,6 +57,12 @@ public class FileInterface extends JFrame implements ActionListener{
         outputPath.setBackground(Color.white);
         north.add(outputPath);
 
+        numberPanel = new JPanel();
+        spinnerNumberModel = new SpinnerNumberModel(numberOfSpiders,1,500,1);
+        numberOfSpiderField = new JSpinner(spinnerNumberModel);
+        numberPanel.add(new JLabel("Select a number of spider threads: "));
+        numberPanel.add(numberOfSpiderField);
+        north.add(numberPanel);
 
         //South panel contains select and confirm button
         south = new JPanel();
@@ -70,8 +79,8 @@ public class FileInterface extends JFrame implements ActionListener{
         add(north, BorderLayout.NORTH);
         add(south, BorderLayout.CENTER);
 
-        this.setPreferredSize(new Dimension(400, 140));
-        this.setMinimumSize(new Dimension(400, 140));
+        this.setPreferredSize(new Dimension(400, 180));
+        this.setMinimumSize(new Dimension(400, 180));
         this.setLocationRelativeTo(null);
 
         this.setVisible(true);
@@ -119,6 +128,9 @@ public class FileInterface extends JFrame implements ActionListener{
                     new File(path).mkdir(); // Create the repository directory.
 
                 crawler.outputPath = path + fileSep();
+                numberOfSpiders = spinnerNumberModel.getNumber().intValue();
+                System.out.println("Number of spiders: " + numberOfSpiders);
+                crawler.numberOfSpiders = numberOfSpiders;
                 crawler.startCrawl();
             }
             // Interface is disposed of in the crawler's startCrawl() method.
