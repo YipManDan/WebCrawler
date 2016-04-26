@@ -202,14 +202,6 @@ public class Crawler {
 //                    org.jsoup.nodes.Document doc = connection.get();
 
 
-                    /*
-                    //Alternate method to get statuscode and document
-                    Connection connection = Jsoup.connect(urlToCrawl.toString()).userAgent("Mozilla");
-                    Connection.Response response = connection.timeout(5000).execute();
-                    Document doc = Jsoup.parse(response.body());
-                    int statusCode = response.statusCode();
-                    org.jsoup.nodes.Document doc = connection.get();
-                    */
 
                     String title = doc.title();
 
@@ -439,6 +431,11 @@ public class Crawler {
         System.out.println("Got to end of startCrawl.");
         // End code execution here.
         System.exit(0);
+    }
+
+    protected void endProgram(){
+        System.out.println("Closing Sequence");
+        System.exit(1);
     }
 
     /* Shorthand functions for accessing elements of csvParser */

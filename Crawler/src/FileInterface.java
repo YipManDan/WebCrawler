@@ -5,6 +5,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 import java.nio.file.Files;
 
@@ -15,7 +17,7 @@ import java.nio.file.Files;
  * @version 1.0
  * @since   2016-04-06
  */
-public class FileInterface extends JFrame implements ActionListener{
+public class FileInterface extends JFrame implements ActionListener, WindowListener {
     //Data
     private final JFileChooser fileChooser = new JFileChooser();
     private final JFileChooser pathChooser = new JFileChooser();
@@ -33,7 +35,7 @@ public class FileInterface extends JFrame implements ActionListener{
     /**
      * A constructor for the FileInterface class.
      */
-    FileInterface(Crawler crawler){
+    FileInterface(Crawler crawler) {
         super("Select a Specification File");
 
         this.crawler = crawler;
@@ -44,7 +46,7 @@ public class FileInterface extends JFrame implements ActionListener{
         JPanel north, south, numberPanel;
 
         //North panel contains text field displaying selected file path
-        north = new JPanel(new GridLayout(3,1));
+        north = new JPanel(new GridLayout(3, 1));
 
         specFile = new JTextField();
         specFile.setText("Select a file: ");
@@ -58,7 +60,7 @@ public class FileInterface extends JFrame implements ActionListener{
         north.add(outputPath);
 
         numberPanel = new JPanel();
-        spinnerNumberModel = new SpinnerNumberModel(numberOfSpiders,1,500,1);
+        spinnerNumberModel = new SpinnerNumberModel(numberOfSpiders, 1, 500, 1);
         numberOfSpiderField = new JSpinner(spinnerNumberModel);
         numberPanel.add(new JLabel("Select a number of spider threads: "));
         numberPanel.add(numberOfSpiderField);
@@ -82,6 +84,7 @@ public class FileInterface extends JFrame implements ActionListener{
         this.setPreferredSize(new Dimension(400, 180));
         this.setMinimumSize(new Dimension(400, 180));
         this.setLocationRelativeTo(null);
+        this.addWindowListener(this);
 
         this.setVisible(true);
     }
@@ -93,7 +96,7 @@ public class FileInterface extends JFrame implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
-        if(o == openButton) {
+        if (o == openButton) {
             int returnVal = fileChooser.showOpenDialog(this);
             if (returnVal == JFileChooser.CANCEL_OPTION)
                 return;
@@ -102,23 +105,22 @@ public class FileInterface extends JFrame implements ActionListener{
             repaint();
             return;
         }
-        if(o == outputPathSelectButton){
+        if (o == outputPathSelectButton) {
             int returnVal = pathChooser.showOpenDialog(this);
-            if(returnVal == JFileChooser.CANCEL_OPTION)
+            if (returnVal == JFileChooser.CANCEL_OPTION)
                 return;
             outputPath.setText(pathChooser.getSelectedFile().getAbsolutePath());
             revalidate();
             repaint();
             return;
         }
-        if(o == okButton) {
-            if (crawler != null)  {
+        if (o == okButton) {
+            if (crawler != null) {
                 crawler.csvFile = fileChooser.getSelectedFile();
                 String path;
-                if(pathChooser.getSelectedFile() == null) {
+                if (pathChooser.getSelectedFile() == null) {
                     path = defaultPath;
-                }
-                else {
+                } else {
                     path = pathChooser.getSelectedFile().getAbsolutePath() + fileSep() + "repository";
                 }
 
@@ -143,10 +145,33 @@ public class FileInterface extends JFrame implements ActionListener{
 
     /**
      * Accessor called to get the file selected by the user.
+     *
      * @return The file selected by the user.
      */
     public File getFileChosen() {
         return fileChooser.getSelectedFile();
     }
 
+    @Override
+    public void windowClosing(WindowEvent e) {
+        crawler.endProgram();
+    }
+
+    public void windowClosed(WindowEvent e) {
+    }
+
+    public void windowOpened(WindowEvent e) {
+    }
+
+    public void windowIconified(WindowEvent e) {
+    }
+
+    public void windowDeiconified(WindowEvent e) {
+    }
+
+    public void windowActivated(WindowEvent e) {
+    }
+
+    public void windowDeactivated(WindowEvent e) {
+    }
 }
