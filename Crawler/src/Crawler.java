@@ -63,6 +63,7 @@ public class Crawler {
 
             boolean hasSlept = false;
             boolean keepCrawling = true;
+            int numPagesCrawledDuringCheck;
 
             while (keepCrawling) {
                 //Get URL to crawl from queue
@@ -71,15 +72,19 @@ public class Crawler {
                 boolean needToSleep = false;
                 exitMessage = CrawlExitMessage.NOT_SET;
 
+                numPagesCrawledDuringCheck = numPagesCrawled.getValAndIncrement();
+
                 // If the queue was empty or the crawl limit has been reached.
                 // Need to either sleep or kill self.
                 if (urlToCrawl == null) {
                     needToSleep = true;
                     exitMessage = CrawlExitMessage.EMPTY_QUEUE;
+                    numPagesCrawled.decrement();
                 }
-                else if (numPagesCrawled.val() >= numberOfPagesToCrawl()) {
+                else if (numPagesCrawledDuringCheck >= numberOfPagesToCrawl()) {
                     needToSleep = true;
                     exitMessage = CrawlExitMessage.LIMIT_REACHED;
+                    numPagesCrawled.decrement();
                 }
 
                 if (needToSleep) {
@@ -101,7 +106,6 @@ public class Crawler {
 
                 // We now know we have a URL.
                 hasSlept = false;
-                numPagesCrawled.increment();
 
                 // Check if the URL to crawl has already been crawled.
                 if (URLs_not_to_crawl.contains(urlToCrawl.toString())) {
