@@ -36,7 +36,7 @@ public class RobotsChecker {
             bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
         }
         catch (Exception e){
-            System.out.println("Exception at Robots.txt: " + e);
+            System.err.println("Exception at Robots.txt: " + e);
             return;
         }
 
@@ -80,8 +80,8 @@ public class RobotsChecker {
 //        for (URL url: disallowedURLs) {
 //            System.out.println(url);
 //        }
-        System.out.println("Done with Disallowed List");
-        System.out.println("");
+//        System.out.println("Done with Disallowed List");
+//        System.out.println("");
     }
 
     public boolean isAllowed(URL url){

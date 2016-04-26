@@ -22,6 +22,15 @@ import java.util.concurrent.ConcurrentSkipListSet;
  */
 public class Crawler {
     /**
+     * Exit message options for the spider.
+     */
+    enum CrawlExitMessage {
+        NOT_SET,
+        LIMIT_REACHED,
+        EMPTY_QUEUE
+    }
+
+    /**
      * The spider class that the Crawler class uses to perform the actual web crawling.
      *
      * @author  Daniel Yeh and Jesse Harder
@@ -32,10 +41,12 @@ public class Crawler {
         public int spiderID;
         public Thread spiderThread;
         public int sleepTime = 3000;
+        public CrawlExitMessage exitMessage;
 
         Spider(int ID) {
             spiderID = ID;
             spiderThread = new Thread(this, "Spider Thread " + String.valueOf(spiderID));
+            exitMessage = CrawlExitMessage.NOT_SET;
         }
 
         public void crawl() {
@@ -57,8 +68,21 @@ public class Crawler {
                 //Get URL to crawl from queue
                 urlToCrawl = URLs_to_crawl.poll();
 
-                // If the queue was empty, either kill self or sleep.
-                if (urlToCrawl == null || numPagesCrawled.val() >= numberOfPagesToCrawl()) {
+                boolean needToSleep = false;
+                exitMessage = CrawlExitMessage.NOT_SET;
+
+                // If the queue was empty or the crawl limit has been reached.
+                // Need to either sleep or kill self.
+                if (urlToCrawl == null) {
+                    needToSleep = true;
+                    exitMessage = CrawlExitMessage.EMPTY_QUEUE;
+                }
+                else if (numPagesCrawled.val() >= numberOfPagesToCrawl()) {
+                    needToSleep = true;
+                    exitMessage = CrawlExitMessage.LIMIT_REACHED;
+                }
+
+                if (needToSleep) {
                     // Already tried once and slept. Queue is
                     if (numberOfSpiders == 1 || hasSlept)
                         break;
@@ -305,24 +329,39 @@ public class Crawler {
         }
 
         spiders = new ArrayList<Spider>();
-        // Create Spiders and make them run.
+        // Create Spiders.
         for (int i = 0; i < numberOfSpiders; i++) {
             Spider spider = new Spider(i);
             System.out.println("Spawning spider " + i);
             spiders.add(spider);
 //            spider.crawl();
-            spider.spiderThread.start();
         }
 
-        //Wait for all of the spiders to finish their work.
-        for (int i = 0; i < numberOfSpiders; i++) {
-            try {
-                spiders.get(i).spiderThread.join();
-            } catch (InterruptedException e) {
-                System.out.println("InterruptedException thrown in Crawler.startCrawl when trying to join spider threads.");
-                e.printStackTrace();
+        while (true) {
+            // Start the spiders crawling.
+            for (Spider spider : spiders) {
+                spider.spiderThread.start();
             }
+
+            //Wait for all of the spiders to finish their work.
+            for (int i = 0; i < numberOfSpiders; i++) {
+                try {
+                    spiders.get(i).spiderThread.join();
+                } catch (InterruptedException e) {
+                    System.out.println("InterruptedException thrown in Crawler.startCrawl when trying to join spider threads.");
+                    e.printStackTrace();
+                }
+            }
+
+            // Check to see that we did crawl the right number of pages.
+            if (numPagesCrawled.val() >= numberOfPagesToCrawl()) break;
+
+            // Check whether we got too few pages because we ran out of links.
+            if (URLs_to_crawl.isEmpty()) break;
+
+            // There are still URLs to crawl and we don't have enough pages, so keep running.
         }
+
 
         //End html file
         try {
