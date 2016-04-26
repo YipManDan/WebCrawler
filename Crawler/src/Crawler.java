@@ -354,10 +354,16 @@ public class Crawler {
             }
 
             // Check to see that we did crawl the right number of pages.
-            if (numPagesCrawled.val() >= numberOfPagesToCrawl()) break;
+            if (numPagesCrawled.val() >= numberOfPagesToCrawl()) {
+                System.out.println("Crawler finished. All pages downloaded successfully.");
+                break;
+            }
 
             // Check whether we got too few pages because we ran out of links.
-            if (URLs_to_crawl.isEmpty()) break;
+            if (URLs_to_crawl.isEmpty()) {
+                System.out.println("Crawler finished. Less than requested pages downloaded because the spiders ran out of links.");
+                break;
+            }
 
             // There are still URLs to crawl and we don't have enough pages, so keep running.
         }
