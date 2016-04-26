@@ -25,10 +25,10 @@ public class NR_FileInterface extends JFrame implements ActionListener {
     /**
      * A constructor for the FileInterface class.
      */
-    NR_FileInterface(NoiseReducer crawler){
+    NR_FileInterface(NoiseReducer noiseReducer){
         super("Select a Specification File");
 
-        this.noiseReducer = crawler;
+        this.noiseReducer = noiseReducer;
 
         inputPathChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         outputPathChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
