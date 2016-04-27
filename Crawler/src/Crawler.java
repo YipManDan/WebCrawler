@@ -128,19 +128,19 @@ public class Crawler {
                     continue;
                 }
 
-                // Check to see if this host has been accessed recently.
-                if (recentlyAccessedURLHosts.contains(urlToCrawl.getHost())) {
-                    // This host has been accessed recently.
-                    // Place back in queue to wait till later and try a different URL.
-                    URLs_to_crawl.add(urlToCrawl);
-                    numPagesCrawled.decrement();
-                    continue;
+                synchronized (lock) {
+                    // Check to see if this host has been accessed recently.
+                    if (recentlyAccessedURLHosts.contains(urlToCrawl.getHost())) {
+                        // This host has been accessed recently.
+                        // Place back in queue to wait till later and try a different URL.
+                        URLs_to_crawl.add(urlToCrawl);
+                        numPagesCrawled.decrement();
+                        continue;
+                    }
+                    // Added the host of the URL we just accessed to a list.
+                    // Use this list to see who not to access again soon.
+                    recentlyAccessedURLHosts.add(urlToCrawl.getHost());
                 }
-
-//                //TODO: Decide if this belongs here
-                // Added the host of the URL we just accessed to a list.
-                // Use this list to see who not to access again soon.
-                recentlyAccessedURLHosts.add(urlToCrawl.getHost());
 
                 /**
                  * Inner class extending TimerTask in order to remove elements from the list of recently accessed URLs.
@@ -209,14 +209,39 @@ public class Crawler {
                     int linkCount = 0;
 
                     for(Element link: links) {
-                        System.out.println("Link: " + link.toString());
+//                        System.out.println("Link: " + link.toString());
                         String linkString = link.attr("href");
+                        String absLinkString = link.attr("abs:href");
+
                         if(linkString.length() == 0)
                             continue;
-                        System.out.println("Abs: " + linkString);
-                        linkCount++;
-                        URL urlToQueue = new URL(linkString);
-                        URLs_to_crawl.add(urlToQueue);
+
+                        String finalLinkString;
+
+                        // Possibly handle the case of a relative link.
+                        if (linkString.equals(absLinkString))
+                            // Link was not relative. Use as is.
+                            finalLinkString = linkString;
+                        else {
+                            finalLinkString = urlToCrawl.getProtocol() + "://" + urlToCrawl.getHost() + linkString;
+                        }
+
+//                        System.out.println("Normal: " + linkString);
+//                        System.out.println("Abs: " + absLinkString);
+//                        System.out.println("Final: " + finalLinkString);
+
+                        try {
+                            URL urlToQueue = new URL(finalLinkString);
+                            linkCount++;
+                            URLs_to_crawl.add(urlToQueue);
+                        } catch (MalformedURLException e) {
+                            System.err.println("Spider.run got malformed URL exception for a link found on page.\n" +
+                                    "Link will not be added to the queue");
+                            System.err.println("Link: " + linkString);
+                            System.err.println("Abs Link: " + absLinkString);
+                            System.err.println("Final Link: " + finalLinkString);
+                        }
+
                     }
 
                     URLs_not_to_crawl.add(urlToCrawl.toString());
@@ -287,6 +312,9 @@ public class Crawler {
     private List<Spider> spiders;
     protected BufferedWriter bufferedWriter;
 
+    // The lock.
+    private Object lock;
+
     Crawler () {
         numPagesCrawled = new ThreadSafeInt(0);
         tableRowNumber = new ThreadSafeInt(0);
@@ -297,6 +325,7 @@ public class Crawler {
         robots = new ConcurrentHashMap<String, RobotsChecker>();
 
         fileInterface = new FileInterface(this);
+        lock = new Object();
 
     }
 

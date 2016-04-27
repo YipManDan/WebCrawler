@@ -11,12 +11,13 @@ import java.util.Scanner;
 public class NoiseReducer {
     protected String inputPath;
     protected String outputPath;
+    private int processCount;
 
     NR_FileInterface fileInterface;
 
     NoiseReducer() {
         // Setup
-
+        processCount = 0;
         fileInterface = new NR_FileInterface(this);
     }
 
@@ -83,6 +84,8 @@ public class NoiseReducer {
                     System.err.println(e.getMessage());
                     System.exit(1);
                 }
+
+                System.out.println("Finished processing "+processCount+" files.");
             }
         }
 

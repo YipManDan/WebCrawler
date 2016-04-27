@@ -28,7 +28,7 @@ public class FileInterface extends JFrame implements ActionListener, WindowListe
     private JTextField specFile, outputPath;
     private SpinnerNumberModel spinnerNumberModel;
     private JSpinner numberOfSpiderField;
-    private int numberOfSpiders = 5;
+    private int numberOfSpiders = 1;
 
     private JButton openButton, outputPathSelectButton, okButton;
 
