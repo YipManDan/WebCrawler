@@ -1,7 +1,4 @@
-import com.sun.deploy.util.SystemUtils;
-
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,6 +21,10 @@ public class NR_FileInterface extends JFrame implements ActionListener, WindowLi
 
     private JButton openButton, outputPathSelectButton, okButton;
 
+    private SpinnerNumberModel spinnerNumberModel;
+    private JSpinner numberOfRunnerField;
+    private int numberOfRunners = 5;
+
     /**
      * A constructor for the FileInterface class.
      */
@@ -35,10 +36,10 @@ public class NR_FileInterface extends JFrame implements ActionListener, WindowLi
         inputPathChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         outputPathChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-        JPanel north, south;
+        JPanel north, south, numberPanel;
 
         //North panel contains text field displaying selected file path
-        north = new JPanel(new GridLayout(2,1));
+        north = new JPanel(new GridLayout(3,1));
 
         inputPath = new JTextField();
         inputPath.setText("Select an input path: ");
@@ -50,6 +51,13 @@ public class NR_FileInterface extends JFrame implements ActionListener, WindowLi
         outputPath.setEditable(false);
         outputPath.setBackground(Color.white);
         north.add(outputPath);
+
+        numberPanel = new JPanel();
+        spinnerNumberModel = new SpinnerNumberModel(numberOfRunners, 1, 500, 1);
+        numberOfRunnerField = new JSpinner(spinnerNumberModel);
+        numberPanel.add(new JLabel("Select a number of spider threads: "));
+        numberPanel.add(numberOfRunnerField);
+        north.add(numberPanel);
 
 
         //South panel contains select and confirm button
@@ -67,8 +75,8 @@ public class NR_FileInterface extends JFrame implements ActionListener, WindowLi
         add(north, BorderLayout.NORTH);
         add(south, BorderLayout.CENTER);
 
-        this.setPreferredSize(new Dimension(400, 140));
-        this.setMinimumSize(new Dimension(400, 140));
+        this.setPreferredSize(new Dimension(400, 180));
+        this.setMinimumSize(new Dimension(400, 180));
         this.setLocationRelativeTo(null);
         this.addWindowListener(this);
 
@@ -131,6 +139,10 @@ public class NR_FileInterface extends JFrame implements ActionListener, WindowLi
                     // Popup something to tell user what went wrong.
                     System.exit(1); // End execution.
                 }
+
+                numberOfRunners = spinnerNumberModel.getNumber().intValue();
+                System.out.println("Number of runners: " + numberOfRunners);
+                noiseReducer.numThreads = numberOfRunners;
 
                 noiseReducer.noiseReduce(inPath, outPath);
             }

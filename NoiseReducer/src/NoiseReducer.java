@@ -11,7 +11,7 @@ public class NoiseReducer {
     protected String inputPath;
     protected String outputPath;
     private ThreadSafeInt processCount;
-    private int numThreads;
+    protected int numThreads;
     protected File[] inDirectoryListing;
     private List<NoiseReducerRunner> runners;
 
