@@ -28,37 +28,44 @@ public class FileInterface extends JFrame implements ActionListener, WindowListe
     private JTextField specFile, outputPath;
     private SpinnerNumberModel spinnerNumberModel;
     private JSpinner numberOfSpiderField;
-    private int numberOfSpiders = 1;
+    private int numberOfSpiders = 1;    //Default spider thread count
 
+    // Java Swing buttons
     private JButton openButton, outputPathSelectButton, okButton;
 
     /**
      * A constructor for the FileInterface class.
      */
     FileInterface(Crawler crawler) {
+
         super("Select a Specification File");
 
         this.crawler = crawler;
 
+        // Set restriction for the JFileChoosers
         fileChooser.setFileFilter(new FileNameExtensionFilter("CSV Files", "csv"));
         pathChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
         JPanel north, south, numberPanel;
 
-        //North panel contains text field displaying selected file path
+        //North panel contains text field displaying selected file paths and thread count
         north = new JPanel(new GridLayout(3, 1));
 
+        // Filepath specified for specification file
         specFile = new JTextField();
         specFile.setText("Select a file: ");
         specFile.setEditable(false);
         specFile.setBackground(Color.white);
         north.add(specFile);
 
+        // Filepath specified for output of repository
         outputPath = new JTextField("Select an output path: ");
         outputPath.setEditable(false);
         outputPath.setBackground(Color.white);
         north.add(outputPath);
 
+
+        // Number of threads to be generated
         numberPanel = new JPanel();
         spinnerNumberModel = new SpinnerNumberModel(numberOfSpiders, 1, 500, 1);
         numberOfSpiderField = new JSpinner(spinnerNumberModel);
@@ -66,7 +73,7 @@ public class FileInterface extends JFrame implements ActionListener, WindowListe
         numberPanel.add(numberOfSpiderField);
         north.add(numberPanel);
 
-        //South panel contains select and confirm button
+        //South panel contains select and confirm buttons
         south = new JPanel();
         openButton = new JButton("Specification File");
         openButton.addActionListener(this);
@@ -78,24 +85,39 @@ public class FileInterface extends JFrame implements ActionListener, WindowListe
         south.add(outputPathSelectButton);
         south.add(okButton);
 
+        // Add north and south panels to JFrame
         add(north, BorderLayout.NORTH);
         add(south, BorderLayout.CENTER);
 
         this.setPreferredSize(new Dimension(400, 180));
         this.setMinimumSize(new Dimension(400, 180));
         this.setLocationRelativeTo(null);
-        this.addWindowListener(this);
+
+        this.addWindowListener(this); // Allows class to check when user closes window
 
         this.setVisible(true);
     }
 
+    /**
+     * Class to obtain what type of file separator is used by the operating system
+     * @return  A string containing the file separator '/' or '\' in standard systems
+     */
     private String fileSep() {
         return System.getProperty("file.separator");
     }
 
     @Override
+    /**
+     * ActionListener for the JButtons
+     * openButton opens a JFileChooser to determine filepath of specification file
+     * outputPathSelectButton opens a JFileChooser to determine filepath to create repository
+     * okButton passes the information to the Crawler class
+     */
     public void actionPerformed(ActionEvent e) {
+
         Object o = e.getSource();
+
+        // Button for spec file
         if (o == openButton) {
             int returnVal = fileChooser.showOpenDialog(this);
             if (returnVal == JFileChooser.CANCEL_OPTION)
@@ -105,6 +127,8 @@ public class FileInterface extends JFrame implements ActionListener, WindowListe
             repaint();
             return;
         }
+
+        // Button for repository output folder
         if (o == outputPathSelectButton) {
             int returnVal = pathChooser.showOpenDialog(this);
             if (returnVal == JFileChooser.CANCEL_OPTION)
@@ -114,9 +138,15 @@ public class FileInterface extends JFrame implements ActionListener, WindowListe
             repaint();
             return;
         }
+
+        // User confirmation button
         if (o == okButton) {
             if (crawler != null) {
+
+                //Sends spec file to crawler
                 crawler.csvFile = fileChooser.getSelectedFile();
+
+                // Assigns output path to crawler
                 String path;
                 if (pathChooser.getSelectedFile() == null) {
                     path = defaultPath;
@@ -130,9 +160,13 @@ public class FileInterface extends JFrame implements ActionListener, WindowListe
                     new File(path).mkdir(); // Create the repository directory.
 
                 crawler.outputPath = path + fileSep();
+
+                // Sets number of spiders threads to create
                 numberOfSpiders = spinnerNumberModel.getNumber().intValue();
                 System.out.println("Number of spiders: " + numberOfSpiders);
                 crawler.numberOfSpiders = numberOfSpiders;
+
+
                 crawler.startCrawl();
             }
             // Interface is disposed of in the crawler's startCrawl() method.
@@ -153,6 +187,11 @@ public class FileInterface extends JFrame implements ActionListener, WindowListe
     }
 
     @Override
+    /**
+     * Window listener to determine if user closes FileInterface.
+     * Method will call the endProgram() method from crawler which will
+     * stop execution of the program.
+     */
     public void windowClosing(WindowEvent e) {
         crawler.endProgram();
     }
