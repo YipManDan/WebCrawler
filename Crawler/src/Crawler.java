@@ -142,7 +142,6 @@ public class Crawler {
                 if(!robotsChecker.isAllowed(urlToCrawl)) {
                     //This host has disallowed access to this URL
                     //Continue on without accessing the page
-                    System.out.println("URL is disallowed: " + urlToCrawl.toString());
                     numPagesCrawled.decrement();
                     continue;
                 }
@@ -171,7 +170,6 @@ public class Crawler {
                     public void setHostToRemove(String urlHost) {urlHostToRemove = urlHost;}
 
                     @Override public void run() {
-                        System.out.println("Removing "+urlHostToRemove+" from list of recently accessed hosts.");
                         recentlyAccessedURLHosts.remove(urlHostToRemove);
                     }
                 }
@@ -182,7 +180,6 @@ public class Crawler {
                 Timer t = new Timer();
                 Remover_Task removerTask = new Remover_Task();
                 removerTask.setHostToRemove(urlToCrawl.getHost());
-                System.out.println("Scheduling timer to remove " + urlToCrawl.getHost() + ".");
 
                 //Check if the host's robot.txt page specifies a crawl-delay
                 if (robotsChecker.crawlDelay == -1)
@@ -238,7 +235,6 @@ public class Crawler {
                     //Store and count links in document
                     int linkCount = 0;
                     for(Element link: links) {
-//                        System.out.println("Link: " + link.toString());
 
                         //Obtain both relative and absolute links
                         String linkString = link.attr("href");
@@ -256,10 +252,6 @@ public class Crawler {
                         else {
                             finalLinkString = urlToCrawl.getProtocol() + "://" + urlToCrawl.getHost() + linkString;
                         }
-
-//                        System.out.println("Normal: " + linkString);
-//                        System.out.println("Abs: " + absLinkString);
-//                        System.out.println("Final: " + finalLinkString);
 
                         //Add valid links to queue of URLs to crawl
                         try {
@@ -389,8 +381,6 @@ public class Crawler {
 //
 //        System.setOut(textAreaLogProgram.getPrintStream());
 //        System.setErr(textAreaLogProgram.getPrintStream());
-//        System.out.println("Test");
-//        System.err.println("Test2");
 
 
         System.out.println("Starting crawl.");
@@ -464,9 +454,8 @@ public class Crawler {
             System.err.println("IOException at end of html file: " + e.getMessage());
         }
 
-        System.out.println("Got to end of startCrawl.");
         // End code execution here.
-//        System.exit(0);
+        System.exit(0);
     }
 
     /**
