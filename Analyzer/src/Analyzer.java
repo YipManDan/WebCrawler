@@ -82,7 +82,7 @@ public class Analyzer {
 
     public static void main(String[] args) {
         Analyzer analyzer = new Analyzer();
-        analyzer.analyze("/Users/JHarder/Desktop/noise_reduced/");
+        analyzer.analyze("/Users/JHarder/Desktop/WebCrawlerStuff/repositories for analysis/nr_wiki/");
     }
 
     /* Start code for sub analyzer. */

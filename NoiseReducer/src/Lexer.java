@@ -39,6 +39,9 @@ public final class Lexer {
                 if (!readingTag && token != "") {
 //                    System.out.println(token);
                     token = token.replaceAll("[^a-zA-z0-9]","");
+                    token = token.replace("[","");
+                    token = token.replace("]","");
+                    token = token.replace("^","");
                     if (token != "") {
                         lexTuples.add(new LexTuple(token,counter,0));
                         token = "";
@@ -52,6 +55,9 @@ public final class Lexer {
                     if (token != "") {
 //                        System.out.println(token);
                         token = token.replaceAll("[^a-zA-z0-9]","");
+                        token = token.replace("[","");
+                        token = token.replace("]","");
+                        token = token.replace("^","");
                         if (token != "") {
                             lexTuples.add(new LexTuple(token,counter,0));
                             token = "";
