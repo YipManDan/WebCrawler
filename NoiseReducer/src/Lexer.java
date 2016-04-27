@@ -37,7 +37,6 @@ public final class Lexer {
 
             if (Character.isWhitespace(currentChar)) {
                 if (!readingTag && token != "") {
-//                    System.out.println(token);
                     token = token.replaceAll("[^a-zA-z0-9]","");
                     token = token.replace("[","");
                     token = token.replace("]","");
@@ -53,7 +52,6 @@ public final class Lexer {
                 // Start a tag
                 if (currentChar == '<' && prevChar != '\\') {
                     if (token != "") {
-//                        System.out.println(token);
                         token = token.replaceAll("[^a-zA-z0-9]","");
                         token = token.replace("[","");
                         token = token.replace("]","");
@@ -70,13 +68,11 @@ public final class Lexer {
                 else if (readingTag && currentChar == '>' && prevChar !='\\') {
                     readingTag = false;
                     token += currentChar;
-//                    System.out.println(token);
                     lexTuples.add(new LexTuple(token,counter,1));
                     token = "";
                     counter++;
                     continue;
                 }
-//                System.out.println(""+currentChar+" - "+token+" - "+readingTag);
                 token += currentChar;
             }
 
@@ -84,10 +80,6 @@ public final class Lexer {
 
         inputStream.close();
 
-        // Used to output all of the tokens of the file for debugging.
-//        for (LexTuple tuple : lexTuples) {
-//            System.out.println(tuple.getToken() + " - " + tuple.getPosition() +  " - " + tuple.getBit());
-//        }
 
         return lexTuples;
     }

@@ -465,13 +465,6 @@ public class Crawler {
     protected void endProgram(){
         //System.setOut(textAreaLogProgram.getStandardOut());
         System.out.println("Closing Sequence");
-        /*
-        try {
-            textAreaLogProgram.thread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        */
         System.exit(1);
     }
 

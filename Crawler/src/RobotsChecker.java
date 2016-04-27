@@ -74,7 +74,6 @@ public class RobotsChecker {
         try {
             // Loop until the end of the robots.txt file
             while ((line = bufferedReader.readLine()) != null) {
-//                System.out.println(line);
 
                 //If the line is empty, then the file is switching sections. Reset the userAgent variable
                 if (line.length() == 0)
@@ -84,7 +83,6 @@ public class RobotsChecker {
                     // Parse and store the specified user-agent
                     parsedLine = line.split(" ");
                     userAgent = parsedLine[1];
-//                    System.out.println("User-agent is: " + userAgent);
                 }
 
                 // Check if the user-agent specified in this block of text is specific to our crawler
@@ -100,7 +98,6 @@ public class RobotsChecker {
                     // If the line lists a URL path to disallow, then add to disallow list
                     else if (parsedLine[0].toLowerCase().startsWith("disallow")) {
                         disallowedURL = prepareURL(parsedLine[1]);
-//                      System.out.println("Disallowed: " + disallowedURL);
                         disallowedURLs.add(new URL("http://" + url.getHost() + disallowedURL));
 
                     }
@@ -115,13 +112,6 @@ public class RobotsChecker {
             System.err.println("Exception at getDisallowList: ");
             e.printStackTrace();
         }
-//        Output list of disallowed URLs
-//        System.out.printf("Disallowed List:");
-//        for (URL url: disallowedURLs) {
-//            System.out.println(url);
-//        }
-//        System.out.println("Done with Disallowed List");
-//        System.out.println("");
     }
 
     /**

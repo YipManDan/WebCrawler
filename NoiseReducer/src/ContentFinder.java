@@ -22,17 +22,19 @@ public class ContentFinder {
     }
 
     /**
-     * Loops through list of parsetuples and finds the range (mid)
+     * Loops through list of LexTuples and finds the range (mid)
      * with a high chance of being content.
      * Maximizing tag/currentToken ratio above and below mid while minimizing tag/currentToken ratio in the mid-range.
      */
     void findContent(){
         //indexes
         int i, j;
+
         //sums
         int low, mid, high;
         int sum, bestSum;
         int highNext;
+
         /*
         integer i will point to the upper inclusive bound of low.
         integer j will point to the lower inclusive bound of high.
@@ -61,8 +63,10 @@ public class ContentFinder {
             //Prior to loop we can visualize i and j as next to each other
             //When the loop begins, j move to the right once and mid has a width of one.
             for(j = i + 2; j < lexTuples.size(); j++){
+
                 //mid gets a new element, so we add to it
                 mid += (1 - lexTuples.get(j - 1).getBit());
+
                 //high loses an element, so we subtract from it
                 high -= lexTuples.get(j - 1).getBit();
 
@@ -74,29 +78,7 @@ public class ContentFinder {
                     lowPosition = lexTuples.get(i).getPosition();
                     highPosition = lexTuples.get(j).getPosition();
                 }
-
             }
         }
-
-
-
     }
-
-    /**
-     * Uh... not sure if I even want this... Maybe closer to even 1/3 split is better? I dunno...
-     * @param i index of new lowPosition
-     * @param j index of new highPosition
-     * @return  true if better(?) false if not
-     */
-    private boolean isCloserToMid(int i, int j){
-        int lowNew, highNew;
-        int lowOld, highOld;
-        int midPosition = (int)(lexTuples.size()/2 + .5);
-        lowNew = Math.abs(midPosition - lexTuples.get(i).getPosition());
-        highNew = Math.abs(midPosition - lexTuples.get(j).getPosition());
-        lowOld = Math.abs(midPosition - lowPosition);
-        highOld = Math.abs(midPosition - highPosition);
-        return true;
-    }
-
 }

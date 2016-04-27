@@ -27,8 +27,6 @@ public class NoiseReducer {
 
     public void noiseReduce() {
         fileInterface.dispose();
-//        System.out.println("Input path: "+inputPath);
-//        System.out.println("Output path: "+outputPath);
 
         // Iterate over all of the files in the directory.
         File inDir = new File(inputPath);
@@ -83,10 +81,8 @@ public class NoiseReducer {
 
             while (true) {
                 int fileIndex = processCount.getValAndIncrement();
-//                System.out.println("Before: " + id + " - " + inDirectoryListing.length + " - " + fileIndex);
                 if (fileIndex >= inDirectoryListing.length)
                     break;
-//                System.out.println("After: " + id + " - " + inDirectoryListing.length + " - " + fileIndex);
 
                 System.out.println("Starting to process file "+fileIndex);
 
