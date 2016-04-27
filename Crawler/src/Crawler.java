@@ -37,6 +37,10 @@ public class Crawler {
 
         private int defaultCrawlDelay = 5000;
 
+        /**
+         * Constructor for Spider. Handles creation of a spider thread, outputs a message then returns to caller.
+         * @param ID    ID number for the spider thread.
+         */
         Spider(int ID) {
             spiderID = ID;
             spiderThread = new Thread(this, "Spider Thread " + String.valueOf(spiderID));
@@ -47,19 +51,28 @@ public class Crawler {
          */
         @Override
         public void run() {
-            URL urlToCrawl;
+            URL urlToCrawl; //Current URL the spider intends to crawl
             System.out.println("Spider " + spiderID + " is crawling.");
 
             boolean hasSlept = false;
             boolean keepCrawling = true;
             int numPagesCrawledDuringCheck;
 
+            /**
+             * This loop handles all the main functionality of the spider thread and continues until a break condition.
+             * The loop will:
+             *  Obtain an URL and determine whether or not it is to be crawled at this point/or ever.
+             *  Download and store information.
+             * The loop ends when there appears to be no more links to crawl or the limit to crawl has been reached.
+             */
             while (keepCrawling) {
                 //Get URL to crawl from queue
                 urlToCrawl = URLs_to_crawl.poll();
 
+                //Reset boolean flag
                 boolean needToSleep = false;
 
+                //Atomic operation to get current value of pages crawled and increment the counter
                 numPagesCrawledDuringCheck = numPagesCrawled.getValAndIncrement();
 
                 // If the queue was empty or the crawl limit has been reached.
@@ -74,9 +87,11 @@ public class Crawler {
                 }
 
                 if (needToSleep) {
-                    // Already tried once and slept. Queue is
+                    // Already tried once and slept.
+                    // Thread believes: Queue is empty or number of pages to be crawled reached.
                     if (numberOfSpiders == 1 || hasSlept)
                         break;
+                    //Sleep the thread
                     else
                     {
                         hasSlept = true;
@@ -101,17 +116,19 @@ public class Crawler {
 
                 // If the url we are about to crawl does not match the URL restriction, do not crawl it.
                 if (URLRestriction() != null && !urlToCrawl.toString().startsWith(URLRestriction().toString())) {
+                    //TODO: Resolve the following
                     // Could do this: URLs_not_to_crawl.add(urlToCrawl.toString());
                     // I think that is slower though than just doing the string compare.
                     numPagesCrawled.decrement();
                     continue;
                 }
 
+                //Create a reference to a RobotsChecker class which handles download and storage of robots.txt restrictions
                 RobotsChecker robotsChecker;
 
                 // Check if we have already got this robot
                 if (robots.containsKey(urlToCrawl.getHost())) {
-                    // We already got this robot.
+                    //robot has already been created
                     robotsChecker = robots.get(urlToCrawl.getHost());
                 } else {
                     // We have not gotten this robot before.
@@ -128,6 +145,8 @@ public class Crawler {
                     continue;
                 }
 
+                //synchronized lock, the prevents multiple threads from getting simultaneous positive
+                //response to this check
                 synchronized (lock) {
                     // Check to see if this host has been accessed recently.
                     if (recentlyAccessedURLHosts.contains(urlToCrawl.getHost())) {
@@ -137,8 +156,8 @@ public class Crawler {
                         numPagesCrawled.decrement();
                         continue;
                     }
-                    // Added the host of the URL we just accessed to a list.
-                    // Use this list to see who not to access again soon.
+                    // Add the host of the URL we are about to access to this list
+                    // This prevents multiple threads from accessing a new host simultaneously
                     recentlyAccessedURLHosts.add(urlToCrawl.getHost());
                 }
 
@@ -163,6 +182,7 @@ public class Crawler {
                 removerTask.setHostToRemove(urlToCrawl.getHost());
                 System.out.println("Scheduling timer to remove " + urlToCrawl.getHost() + ".");
 
+                //Check if the host's robot.txt page specifies a crawl-delay
                 if (robotsChecker.crawlDelay == -1)
                     t.schedule(removerTask, defaultCrawlDelay);
                 else {
@@ -174,20 +194,19 @@ public class Crawler {
 
                 //Open document
                 try {
+                    //Open a connection to the page, get a response and obtain the document and status code from the response
                     Connection connection = Jsoup.connect(urlToCrawl.toString()).userAgent("Mozilla");
                     Connection.Response response = connection.timeout(5000).execute();
                     Document doc = Jsoup.parse(response.body());
                     int statusCode = response.statusCode();
-//                    int statusCode = connection.timeout(5000).execute().statusCode();
-//                    org.jsoup.nodes.Document doc = connection.get();
 
                     String title = doc.title();
 
-                    //Get Links
+                    //Store all images and links in an ArrayList
                     Elements images = doc.select("img[src]");
                     Elements links = doc.select("a");
 
-                    //Clean downloaded document with Jsoup Cleaner. Removes images.
+                    //Clean downloaded document with Jsoup Cleaner. Removes images and head.
                     Whitelist whitelist = Whitelist.relaxed();
                     whitelist.addTags("all");
                     whitelist.removeTags("img");
@@ -195,21 +214,25 @@ public class Crawler {
                     Cleaner cleaner = new Cleaner(whitelist);
                     doc = cleaner.clean(doc);
 
+                    //Reinsert title into a document
                     doc.title(title);
                     if(title.length() == 0) {
                         title = "Untitled";
                     }
 
+                    //Remove all image and references to images from a document
                     images.remove();
 
                     //Output title of the page
                     System.out.println("");
                     System.out.println("Spider " + spiderID + " downloaded: " + title.toString() + " " + urlToCrawl);
 
+                    //Store and count links in document
                     int linkCount = 0;
-
                     for(Element link: links) {
 //                        System.out.println("Link: " + link.toString());
+
+                        //Obtain both relative and absolute links
                         String linkString = link.attr("href");
                         String absLinkString = link.attr("abs:href");
 
@@ -230,6 +253,7 @@ public class Crawler {
 //                        System.out.println("Abs: " + absLinkString);
 //                        System.out.println("Final: " + finalLinkString);
 
+                        //Add valid links to queue of URLs to crawl
                         try {
                             URL urlToQueue = new URL(finalLinkString);
                             linkCount++;
@@ -244,10 +268,13 @@ public class Crawler {
 
                     }
 
+                    // Add current URL to list, to prevent crawler from re-crawling a page
                     URLs_not_to_crawl.add(urlToCrawl.toString());
 
-                    // Figure out a name for the file.
+                    // Determine name for the file.
                     String filename = urlToCrawl.getHost().toString() + ".html";
+
+                    //Loop to prevent a file overwriting a previously saved file
                     int nameAttemptCounter = 1;
                     while (fileNamesUsed.contains(outputPath + filename)) {
                         filename = urlToCrawl.getHost().toString() + nameAttemptCounter + ".html";
@@ -256,9 +283,10 @@ public class Crawler {
                     fileNamesUsed.add(outputPath + filename);
                     System.out.println("Saving file: " + filename);
 
+                    // Write document information to report.html
                     try{
                         tableRowNumber.increment();
-                        bufferedWriter.write("<tr>\n\t\t<td>" + tableRowNumber.val() + "</td>\n" + "" +
+                        bufferedWriter.write("\t<tr>\n\t\t<td>" + tableRowNumber.val() + "</td>\n" + "" +
                                 "\t\t<td><a href=\"" + urlToCrawl + "\">" + title + "</a></td>\n" +
                                 "\t\t<td><a href=\"" + outputPath + filename + "\">" + filename + "</a></td>\n" +
                                 "\t\t<td>" + statusCode + "</td>\n" +
@@ -270,6 +298,7 @@ public class Crawler {
                         System.err.println("IOException writing to HTML file: " + title + " " + e.getMessage());
                     }
 
+                    // Write document out to file with the determined filename
                     Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputPath + filename), "UTF-8"));
                     try{
                         out.write(doc.outerHtml());
@@ -297,14 +326,18 @@ public class Crawler {
     protected File csvFile;
     protected String outputPath;
     protected int numberOfSpiders = 5;
+    // Left for future distributed crawler scaling
     //    protected int numberOfQueues;
+
+    //Thread safe integers which allow for concurrent counters
     private ThreadSafeInt numPagesCrawled;
     private ThreadSafeInt tableRowNumber;
+
     private Set<String> recentlyAccessedURLHosts;   // For the URLs that should not be crawled again yet.
     private Queue<URL> URLs_to_crawl;           // For the URLs scraped and queued but not yet crawled
     private Set<String> URLs_not_to_crawl;          // For the URLs already crawled.
-    private Set<String> fileNamesUsed;
-    private ConcurrentHashMap<String, RobotsChecker> robots;
+    private Set<String> fileNamesUsed;          // For the filenames already assigned
+    private ConcurrentHashMap<String, RobotsChecker> robots;        //HashMap of created RobotSChecker classes
 
     // Contained Classes
     private FileInterface fileInterface;
@@ -315,21 +348,32 @@ public class Crawler {
     // The lock.
     private Object lock;
 
+    /**
+     * Constructor method for Crawler class
+     */
     Crawler () {
+
         numPagesCrawled = new ThreadSafeInt(0);
         tableRowNumber = new ThreadSafeInt(0);
+
         recentlyAccessedURLHosts = new ConcurrentSkipListSet<String>();
         URLs_to_crawl = new ConcurrentLinkedQueue<URL>();
         URLs_not_to_crawl = new ConcurrentSkipListSet<String>();
         fileNamesUsed = new ConcurrentSkipListSet<String>();
         robots = new ConcurrentHashMap<String, RobotsChecker>();
 
+        // Creates a new fileInterface class to interact with user
         fileInterface = new FileInterface(this);
-        lock = new Object();
 
+        // Creates a lock object to be used for thread-safety
+        lock = new Object();
     }
 
+    /**
+     * Method called by FileInterface to begin the crawling
+     */
     public void startCrawl() {
+
         System.out.println("Starting crawl.");
         // Dispose of the interface now that we're done with it..
         if (fileInterface != null) fileInterface.dispose();
@@ -337,7 +381,6 @@ public class Crawler {
         // Parse the CSV file.
         csvParser = new CSV_Parser();
         csvParser.parseFile(fileInterface.getFileChosen());
-        //csvParser = new CSV_Parser("http://www.thesketchfellows.com/",1,"http://www.thesketchfellows.com/");
 
         // Add the seed URL to the list of URLs that need crawling.
         URLs_to_crawl.add(seedURL());
@@ -347,7 +390,7 @@ public class Crawler {
             bufferedWriter = new BufferedWriter(new FileWriter(outputPath + "report.html"));
             bufferedWriter.write("<!doctype html>\n<html>\n<head>\n\t<title>Report</title>\n</head>\n");
             bufferedWriter.write("<body>\n\t<table border=\"1\">\n\t<tr>\n\t\t<th>Item #</th>\n\t\t<th>Title</th>\n\t\t<th>Document Location</th>\n\t\t<th>HTTP Status Code</th>\n" +
-                    "\t\t<th>Number of Outlinks</th>\n\t\t<th>Number of Images</th>\n\t</tr>");
+                    "\t\t<th>Number of Outlinks</th>\n\t\t<th>Number of Images</th>\n\t</tr>\n");
         }
         catch (IOException e){
             System.err.println("IOException creating bufferedWriter" + e.getMessage());
@@ -359,7 +402,6 @@ public class Crawler {
             Spider spider = new Spider(i);
             System.out.println("Spawning spider " + i);
             spiders.add(spider);
-//            spider.crawl();
         }
 
         while (true) {
@@ -402,12 +444,16 @@ public class Crawler {
         catch (IOException e){
             System.err.println("IOException at end of html file: " + e.getMessage());
         }
-        // Maybe do stuff with what the spiders gathered.
+
         System.out.println("Got to end of startCrawl.");
         // End code execution here.
         System.exit(0);
     }
 
+    /**
+     * To be called to prematurely end program.
+     * Typical call is the event the user closes the FileInterface window
+     */
     protected void endProgram(){
         System.out.println("Closing Sequence");
         System.exit(1);
