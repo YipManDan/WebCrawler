@@ -62,7 +62,12 @@ public class CSV_Parser {
 
             // Read in the seedURL
             if (csvScanner.hasNext()) {
-                seedURL = new URL(csvScanner.next());
+                String urlString = csvScanner.next();
+                // Add protocol if not given.
+                if (!urlString.startsWith("http")) {
+                    urlString = "http://"+urlString;
+                }
+                seedURL = new URL(urlString);
                 System.out.println("seedURL: " + seedURL.toString());
             }
             else
@@ -79,8 +84,12 @@ public class CSV_Parser {
             // Read in the seedURL restriction field, if one is there.
             if (csvScanner.hasNext()) {
                 try {
-                    URLRestriction = new URL(csvScanner.next());
-                    System.out.println("URLRestriction" + URLRestriction.toString());
+                    String urlString = csvScanner.next();
+                    // Add protocol if not given.
+                    if (!urlString.startsWith("http")) {
+                        urlString = "http://"+urlString;
+                    }
+                    URLRestriction = new URL(urlString);
                 }
                 catch (MalformedURLException e) {
                     System.out.println("No URLRestriction");
