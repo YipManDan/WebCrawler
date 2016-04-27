@@ -11,7 +11,10 @@ import java.io.File;
 import java.nio.file.Files;
 
 /**
- * The FileInterface
+ * The FileInterface to interact with user.
+ * Obtains input filepath of specfile,
+ *  output filepath for the repository,
+ *  and the number of spider threads to generate.
  *
  * @author  Daniel Yeh and Jesse Harder
  * @version 1.0
@@ -96,6 +99,7 @@ public class FileInterface extends JFrame implements ActionListener, WindowListe
         this.addWindowListener(this); // Allows class to check when user closes window
 
         this.setVisible(true);
+
     }
 
     /**

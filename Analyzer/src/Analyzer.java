@@ -82,7 +82,8 @@ public class Analyzer {
 
     public static void main(String[] args) {
         Analyzer analyzer = new Analyzer();
-        analyzer.analyze("/Users/JHarder/Desktop/WebCrawlerStuff/repositories for analysis/nr_wiki/");
+//        analyzer.analyze("/Users/JHarder/Desktop/WebCrawlerStuff/repositories for analysis/nr_wiki/");
+        analyzer.analyze("C:\\Users\\Daniel\\Desktop\\New Folder\\cleaned");
     }
 
     /* Start code for sub analyzer. */

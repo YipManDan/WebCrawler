@@ -17,6 +17,8 @@ import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * A web crawler created for our COEN 272 class.
+ * The main class which initializes the web crawling.
+ * Contains the spider class which handles the bulk of the crawling work.
  *
  * @author  Daniel Yeh and Jesse Harder
  * @version 1.0
@@ -197,6 +199,12 @@ public class Crawler {
                     //Open a connection to the page, get a response and obtain the document and status code from the response
                     Connection connection = Jsoup.connect(urlToCrawl.toString()).userAgent("Mozilla");
                     Connection.Response response = connection.timeout(5000).execute();
+                    String contentType = response.contentType();
+                    if(!contentType.contains("text/html")) {
+                        System.out.println("Page downloaded was not of content type: text/html");
+                        numPagesCrawled.decrement();
+                        continue;
+                    }
                     Document doc = Jsoup.parse(response.body());
                     int statusCode = response.statusCode();
 
@@ -341,6 +349,7 @@ public class Crawler {
 
     // Contained Classes
     private FileInterface fileInterface;
+    private TextAreaLogProgram textAreaLogProgram;
     private CSV_Parser csvParser;
     private List<Spider> spiders;
     protected BufferedWriter bufferedWriter;
@@ -362,6 +371,7 @@ public class Crawler {
         fileNamesUsed = new ConcurrentSkipListSet<String>();
         robots = new ConcurrentHashMap<String, RobotsChecker>();
 
+
         // Creates a new fileInterface class to interact with user
         fileInterface = new FileInterface(this);
 
@@ -373,6 +383,15 @@ public class Crawler {
      * Method called by FileInterface to begin the crawling
      */
     public void startCrawl() {
+        // Section of code attempts to create a JFrame that would show log outputs, but it doesn't end the program when closed.
+//        textAreaLogProgram = new TextAreaLogProgram(this);
+//        textAreaLogProgram.thread.start();
+//
+//        System.setOut(textAreaLogProgram.getPrintStream());
+//        System.setErr(textAreaLogProgram.getPrintStream());
+//        System.out.println("Test");
+//        System.err.println("Test2");
+
 
         System.out.println("Starting crawl.");
         // Dispose of the interface now that we're done with it..
@@ -447,7 +466,7 @@ public class Crawler {
 
         System.out.println("Got to end of startCrawl.");
         // End code execution here.
-        System.exit(0);
+//        System.exit(0);
     }
 
     /**
@@ -455,7 +474,15 @@ public class Crawler {
      * Typical call is the event the user closes the FileInterface window
      */
     protected void endProgram(){
+        //System.setOut(textAreaLogProgram.getStandardOut());
         System.out.println("Closing Sequence");
+        /*
+        try {
+            textAreaLogProgram.thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        */
         System.exit(1);
     }
 
