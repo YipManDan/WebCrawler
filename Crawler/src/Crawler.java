@@ -181,8 +181,6 @@ public class Crawler {
 //                    int statusCode = connection.timeout(5000).execute().statusCode();
 //                    org.jsoup.nodes.Document doc = connection.get();
 
-
-
                     String title = doc.title();
 
                     //Get Links
@@ -211,12 +209,11 @@ public class Crawler {
 
                     for(Element link: links) {
                         String linkString = link.attr("abs:href");
-//                        System.out.println("Saving URL: " + linkString);
                         if(linkString.length() == 0)
                             continue;
                         URL urlToQueue = new URL(linkString);
                         URLs_to_crawl.add(urlToQueue);
-//                        System.out.println("link: " + linkString);
+                        System.out.println("link: " + linkString);
                     }
 
                     URLs_not_to_crawl.add(urlToCrawl.toString());
