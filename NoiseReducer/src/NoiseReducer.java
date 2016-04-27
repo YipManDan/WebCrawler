@@ -3,7 +3,6 @@ import org.apache.commons.io.FilenameUtils;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 /**
  * Created by Daniel on 4/20/2016.
@@ -11,14 +10,19 @@ import java.util.Scanner;
 public class NoiseReducer {
     protected String inputPath;
     protected String outputPath;
-    private int processCount;
+    private ThreadSafeInt processCount;
+    private int numThreads;
+    protected File[] inDirectoryListing;
+    private List<NoiseReducerRunner> runners;
 
     NR_FileInterface fileInterface;
 
     NoiseReducer() {
         // Setup
-        processCount = 0;
+        numThreads = 250;
+        processCount = new ThreadSafeInt(0);
         fileInterface = new NR_FileInterface(this);
+        runners = new ArrayList<NoiseReducerRunner>();
     }
 
     public void noiseReduce() {
@@ -28,15 +32,72 @@ public class NoiseReducer {
 
         // Iterate over all of the files in the directory.
         File inDir = new File(inputPath);
-        File[] inDirectoryListing = inDir.listFiles();
+        inDirectoryListing = inDir.listFiles();
         if (inDirectoryListing != null) {
-            for (File containedFile : inDirectoryListing) {
+            for (int i = 0; i < numThreads && i < inDirectoryListing.length; i++) {
+                NoiseReducerRunner runner = new NoiseReducerRunner(i);
+                runners.add(runner);
+                runner.thread.start();
+            }
+        }
+
+        for (NoiseReducerRunner runner : runners) {
+            try {
+                runner.thread.join();
+            } catch (InterruptedException e) {
+                System.err.println("InterruptedException thrown when trying to join thread "+runner.id);
+                e.printStackTrace();
+            }
+        }
+
+        System.exit(0);
+    }
+
+    // Calls the default one.
+    public void noiseReduce(String inPath, String outPath) {
+        inputPath = inPath;
+        outputPath = outPath;
+        noiseReduce();
+    }
+
+    protected void endProgram(){
+        System.out.println("Closing Sequence");
+        System.exit(1);
+    }
+
+    public static void main(String[] args){
+        new NoiseReducer();
+    }
+
+    class NoiseReducerRunner implements Runnable {
+        int id;
+        protected Thread thread;
+
+        NoiseReducerRunner(int id) {
+            this.id = id;
+            thread = new Thread(this, "Noise Reducer Thread "+id);
+        }
+
+        @Override
+        public void run() {
+
+            while (true) {
+                int fileIndex = processCount.getValAndIncrement();
+//                System.out.println("Before: " + id + " - " + inDirectoryListing.length + " - " + fileIndex);
+                if (fileIndex >= inDirectoryListing.length)
+                    break;
+//                System.out.println("After: " + id + " - " + inDirectoryListing.length + " - " + fileIndex);
+
+                System.out.println("Starting to process file "+fileIndex);
+
+                File file = inDirectoryListing[fileIndex];
+
                 // Skip report.html
-                if (containedFile.getName().equals("report.html"))
+                if (file.getName().equals("report.html"))
                     continue;
 
                 // Get the file extension.
-                String extension = FilenameUtils.getExtension(containedFile.getName());
+                String extension = FilenameUtils.getExtension(file.getName());
 
                 if (!extension.equals("html"))
                     continue;
@@ -44,21 +105,16 @@ public class NoiseReducer {
                 List<LexTuple> lexTuples;
 
                 try {
-                    lexTuples = Lexer.lexFile(containedFile);
+                    lexTuples = Lexer.lexFile(file);
 
                     // Run analysis on lexTupleList.
                     ContentFinder contentFinder = new ContentFinder(lexTuples);
 
-                    System.out.println("Content Finder finished.");
-                    System.out.println("Lower position: "+contentFinder.lowPosition);
-                    System.out.println("High position: "+contentFinder.highPosition);
-
-                    // Write out the tokens in the list in the identified reason.
                     if (lexTuples != null) {
                         boolean firstLine = true;
                         BufferedWriter outputWriter;
 
-                        outputWriter = new BufferedWriter(new FileWriter(outputPath + containedFile.getName()));
+                        outputWriter = new BufferedWriter(new FileWriter(outputPath + file.getName()));
                         for (int i = contentFinder.lowPosition; i <= contentFinder.highPosition; i++){
                             LexTuple lexTuple = lexTuples.get(i);
                             if (lexTuple.getBit() != 1) {
@@ -85,26 +141,11 @@ public class NoiseReducer {
                     System.exit(1);
                 }
 
-                System.out.println("Finished processing "+processCount+" files.");
+                System.out.println("Finished processing file "+fileIndex);
             }
+
+            System.out.println("Noise Reducer Thread "+id+" done running.");
+            return;
         }
-
-        System.exit(0);
-    }
-
-    // Calls the default one.
-    public void noiseReduce(String inPath, String outPath) {
-        inputPath = inPath;
-        outputPath = outPath;
-        noiseReduce();
-    }
-
-    protected void endProgram(){
-        System.out.println("Closing Sequence");
-        System.exit(1);
-    }
-
-    public static void main(String[] args){
-        new NoiseReducer();
     }
 }
