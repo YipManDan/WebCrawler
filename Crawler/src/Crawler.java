@@ -185,6 +185,7 @@ public class Crawler {
 
                     //Get Links
                     Elements images = doc.select("img[src]");
+                    Elements links = doc.select("a");
 
                     //Clean downloaded document with Jsoup Cleaner. Removes images.
                     Whitelist whitelist = Whitelist.relaxed();
@@ -205,15 +206,17 @@ public class Crawler {
                     System.out.println("");
                     System.out.println("Spider " + spiderID + " downloaded: " + title.toString() + " " + urlToCrawl);
 
-                    Elements links = doc.select("a");
+                    int linkCount = 0;
 
                     for(Element link: links) {
-                        String linkString = link.attr("abs:href");
+                        System.out.println("Link: " + link.toString());
+                        String linkString = link.attr("href");
                         if(linkString.length() == 0)
                             continue;
+                        System.out.println("Abs: " + linkString);
+                        linkCount++;
                         URL urlToQueue = new URL(linkString);
                         URLs_to_crawl.add(urlToQueue);
-                        System.out.println("link: " + linkString);
                     }
 
                     URLs_not_to_crawl.add(urlToCrawl.toString());
@@ -234,7 +237,7 @@ public class Crawler {
                                 "\t\t<td><a href=\"" + urlToCrawl + "\">" + title + "</a></td>\n" +
                                 "\t\t<td><a href=\"" + outputPath + filename + "\">" + filename + "</a></td>\n" +
                                 "\t\t<td>" + statusCode + "</td>\n" +
-                                "\t\t<td>" + links.size() + "</td>\n" +
+                                "\t\t<td>" + linkCount + "</td>\n" +
                                 "\t\t<td>" + images.size() + "</td>\n" +
                                 "\t</tr>\n");
                     }
