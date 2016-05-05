@@ -186,7 +186,7 @@ public class Crawler {
                     t.schedule(removerTask, defaultCrawlDelay);
                 else {
                     t.schedule(removerTask, robotsChecker.crawlDelay * 1000);
-                    System.out.println("Timer has an updated crawl delay: " + robotsChecker.crawlDelay*1000 + "sec");
+                    System.out.println("Timer has an updated crawl delay: " + robotsChecker.crawlDelay*1000 + "milliseconds");
                 }
 
                 /* At this point we are ready to get the page. */
