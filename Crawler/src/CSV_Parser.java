@@ -87,7 +87,7 @@ public class CSV_Parser {
                     String urlString = csvScanner.next();
                     // Add protocol if not given.
                     if (!urlString.startsWith("http")) {
-                        urlString = "http://"+urlString;
+                        urlString = seedURL.getProtocol() + "://" + urlString;
                     }
                     URLRestriction = new URL(urlString);
                 }

@@ -186,7 +186,7 @@ public class Crawler {
                     t.schedule(removerTask, defaultCrawlDelay);
                 else {
                     t.schedule(removerTask, robotsChecker.crawlDelay * 1000);
-                    System.out.println("Timer has an updated crawl delay: " + robotsChecker.crawlDelay*1000 + "sec");
+                    System.out.println("Timer has an updated crawl delay: " + robotsChecker.crawlDelay*1000 + " milliseconds");
                 }
 
                 /* At this point we are ready to get the page. */
@@ -197,6 +197,8 @@ public class Crawler {
                     Connection connection = Jsoup.connect(urlToCrawl.toString()).userAgent("Mozilla");
                     Connection.Response response = connection.timeout(5000).execute();
                     String contentType = response.contentType();
+
+                    //Checks content type and only continues with text/html
                     if(!contentType.contains("text/html")) {
                         System.out.println("Page downloaded was not of content type: text/html");
                         numPagesCrawled.decrement();
@@ -212,12 +214,12 @@ public class Crawler {
                     Elements links = doc.select("a");
 
                     //Clean downloaded document with Jsoup Cleaner. Removes images and head.
-                    Whitelist whitelist = Whitelist.relaxed();
-                    whitelist.addTags("all");
-                    whitelist.removeTags("img");
+//                    Whitelist whitelist = Whitelist.relaxed();
+//                    whitelist.addTags("all");
+//                    whitelist.removeTags("img");
 
-                    Cleaner cleaner = new Cleaner(whitelist);
-                    doc = cleaner.clean(doc);
+//                    Cleaner cleaner = new Cleaner(whitelist);
+//                    doc = cleaner.clean(doc);
 
                     //Reinsert title into a document
                     doc.title(title);
@@ -226,7 +228,7 @@ public class Crawler {
                     }
 
                     //Remove all image and references to images from a document
-                    images.remove();
+//                    images.remove();
 
                     //Output title of the page
                     System.out.println("");
