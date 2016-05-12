@@ -341,12 +341,15 @@ public class Crawler {
     // Contained Classes
     private FileInterface fileInterface;
     private TextAreaLogProgram textAreaLogProgram;
-    private CSV_Parser2 csvParser;
+    private CSV_Parser csvParser;
     private List<Spider> spiders;
     protected BufferedWriter bufferedWriter;
 
     // The lock.
     private Object lock;
+
+    // Toggle for project 2
+    private boolean updateForProject2 = true;
 
     /**
      * Constructor method for Crawler class
@@ -470,13 +473,20 @@ public class Crawler {
     /* Shorthand functions for accessing elements of csvParser */
 
     // CSV Parser
-    private URL seedURL() {
-        return csvParser.seedURL;
+    private List<URL> seedURLs() {
+        if (!updateForProject2) {
+            ArrayList<URL> urlList = new ArrayList<URL>();
+            urlList.add(csvParser.seedURL);
+            return urlList;
+        } else {
+            return
+        }
+
     }
     private int numberOfPagesToCrawl() {
         return csvParser.numberOfPagesToCrawl;
     }
-    private URL URLRestriction() {
+    private URL URLRestrictions() {
         return csvParser.URLRestriction;
     }
 

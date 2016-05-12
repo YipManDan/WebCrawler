@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -15,8 +17,10 @@ import java.util.Scanner;
  */
 public class CSV_Parser {
     public URL seedURL;
+    public List<URL> seedURLs;
     public int numberOfPagesToCrawl;
     public URL URLRestriction;
+    public List<URL> URLRestrictions;
 
     // Default constructor does nothing.
     CSV_Parser() {}
@@ -56,6 +60,8 @@ public class CSV_Parser {
     }
 
     public void parseFile(File inputFile) {
+        seedURLs = new ArrayList<URL>();
+        URLRestrictions = new ArrayList<URL>();
         try {
             Scanner csvScanner = new Scanner(inputFile);
             csvScanner.useDelimiter(",");
@@ -69,6 +75,7 @@ public class CSV_Parser {
                 }
                 seedURL = new URL(urlString);
                 System.out.println("seedURL: " + seedURL.toString());
+                seedURLs.add(seedURL);
             }
             else
                 System.err.println("CSV File Reading Error: Could not read seedURL");
@@ -90,6 +97,7 @@ public class CSV_Parser {
                         urlString = seedURL.getProtocol() + "://" + urlString;
                     }
                     URLRestriction = new URL(urlString);
+                    URLRestrictions.add(URLRestriction);
                 }
                 catch (MalformedURLException e) {
                     System.out.println("No URLRestriction");
