@@ -2,14 +2,11 @@ import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.safety.Cleaner;
-import org.jsoup.safety.Whitelist;
 import org.jsoup.select.Elements;
 
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -344,7 +341,7 @@ public class Crawler {
     // Contained Classes
     private FileInterface fileInterface;
     private TextAreaLogProgram textAreaLogProgram;
-    private CSV_Parser csvParser;
+    private CSV_Parser2 csvParser;
     private List<Spider> spiders;
     protected BufferedWriter bufferedWriter;
 
@@ -390,7 +387,7 @@ public class Crawler {
         if (fileInterface != null) fileInterface.dispose();
 
         // Parse the CSV file.
-        csvParser = new CSV_Parser();
+        csvParser = new CSV_Parser2();
         csvParser.parseFile(fileInterface.getFileChosen());
 
         // Add the seed URL to the list of URLs that need crawling.

@@ -33,7 +33,7 @@ public class CSV_Parser {
         try{
             this.seedURL = new URL(seedURL);
         } catch (MalformedURLException e) {
-            System.out.println("MalformedURLException in CSV_Parser constructor.");
+            System.out.println("MalformedURLException in CSV_Parser2 constructor.");
             e.printStackTrace();
         }
     }
@@ -50,7 +50,7 @@ public class CSV_Parser {
             this.seedURL = new URL(seedURL);
             this.URLRestriction = new URL(URLRestriction);
         } catch (MalformedURLException e) {
-            System.out.println("MalformedURLException in CSV_Parser constructor.");
+            System.out.println("MalformedURLException in CSV_Parser2 constructor.");
             e.printStackTrace();
         }
     }
@@ -100,9 +100,9 @@ public class CSV_Parser {
                 URLRestriction = null;
         } catch(FileNotFoundException exception)
         {
-            System.out.println("FileNotFoundException in CSV_Parser.parseFile(): The file " + inputFile.getPath() + " was not found.");
+            System.out.println("FileNotFoundException in CSV_Parser2.parseFile(): The file " + inputFile.getPath() + " was not found.");
         } catch (MalformedURLException e) {
-            System.out.println("MalformedURLException in CSV_Parser.parseFile().");
+            System.out.println("MalformedURLException in CSV_Parser2.parseFile().");
             e.printStackTrace();
         }
 
