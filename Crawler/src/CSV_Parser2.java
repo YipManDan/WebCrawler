@@ -13,13 +13,11 @@ import java.util.Scanner;
  * @version 1.0
  * @since   2016-05-11
  */
-public class CSV_Parser2 {
-    public List<URL> seedURLs;
-    public int numberOfPagesToCrawl;
-    public List<URL> URLRestrictions;
-
+public class CSV_Parser2 extends CSV_Parser {
     // Default constructor does nothing.
     CSV_Parser2() {
+        seedURL = null;
+        URLRestriction = null;
         seedURLs = new ArrayList<URL>();
         URLRestrictions = new ArrayList<URL>();
     }

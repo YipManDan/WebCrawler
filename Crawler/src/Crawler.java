@@ -114,12 +114,21 @@ public class Crawler {
                 }
 
                 // If the url we are about to crawl does not match the URL restriction, do not crawl it.
-                if (URLRestriction() != null && !urlToCrawl.toString().startsWith(URLRestriction().toString())) {
-                    //TODO: Resolve the following
-                    // Could do this: URLs_not_to_crawl.add(urlToCrawl.toString());
-                    // I think that is slower though than just doing the string compare.
-                    numPagesCrawled.decrement();
-                    continue;
+                if (!URLRestrictions().isEmpty()) {
+                    boolean violatesURLRestrictions = true;
+                    // Check if URL fits any of the restrictions.
+                    for (URL restriction: URLRestrictions()) {
+                        if (urlToCrawl.toString().startsWith(restriction.toString())) {
+                            violatesURLRestrictions = false;
+                            break;
+                        }
+                    }
+
+                    // If not of the restrictions were matched, go to next URL.
+                    if (violatesURLRestrictions) {
+                        numPagesCrawled.decrement();
+                        continue;
+                    }
                 }
 
                 //Create a reference to a RobotsChecker class which handles download and storage of robots.txt restrictions
@@ -390,11 +399,16 @@ public class Crawler {
         if (fileInterface != null) fileInterface.dispose();
 
         // Parse the CSV file.
-        csvParser = new CSV_Parser2();
+        if (!updateForProject2)
+            csvParser = new CSV_Parser();
+        else
+            csvParser = new CSV_Parser2();
+
         csvParser.parseFile(fileInterface.getFileChosen());
 
         // Add the seed URL to the list of URLs that need crawling.
-        URLs_to_crawl.add(seedURL());
+        for (URL url : seedURLs())
+            URLs_to_crawl.add(url);
 
         //Create report.html
         try {
@@ -474,20 +488,13 @@ public class Crawler {
 
     // CSV Parser
     private List<URL> seedURLs() {
-        if (!updateForProject2) {
-            ArrayList<URL> urlList = new ArrayList<URL>();
-            urlList.add(csvParser.seedURL);
-            return urlList;
-        } else {
-            return
-        }
-
+        return csvParser.seedURLs;
     }
     private int numberOfPagesToCrawl() {
         return csvParser.numberOfPagesToCrawl;
     }
-    private URL URLRestrictions() {
-        return csvParser.URLRestriction;
+    private List<URL> URLRestrictions() {
+        return csvParser.URLRestrictions;
     }
 
     public static void main(String[] args){
