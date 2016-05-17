@@ -314,6 +314,16 @@ public class Crawler {
                     finally {
                         out.close();
                     }
+
+                    // Record the URL - filename pair to the JSON file.
+                    synchronized (JSONPath) {
+                        Writer jsonOut = new BufferedWriter(new FileWriter(JSONPath, true));
+                        try {
+                            jsonOut.write("{\"" + urlToCrawl.toString() + "\" : \"" + filename + "\"}\n");
+                        } finally {
+                            jsonOut.close();
+                        }
+                    }
                 }
                 catch (IOException e){
                     System.err.println("IOException for Spider " + spiderID + ": " + e.toString());
@@ -333,6 +343,7 @@ public class Crawler {
     // Data
     protected File csvFile;
     protected String outputPath;
+    protected String JSONPath;
     protected int numberOfSpiders = 5;
     // Left for future distributed crawler scaling
     //    protected int numberOfQueues;
@@ -397,6 +408,7 @@ public class Crawler {
         System.out.println("Starting crawl.");
         // Dispose of the interface now that we're done with it..
         if (fileInterface != null) fileInterface.dispose();
+        JSONPath = outputPath + "File_URL_Pairs.json";
 
         // Parse the CSV file.
         if (!updateForProject2)
