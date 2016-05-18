@@ -319,7 +319,7 @@ public class Crawler {
                     synchronized (JSONPath) {
                         Writer jsonOut = new BufferedWriter(new FileWriter(JSONPath, true));
                         try {
-                            jsonOut.write("{\"" + urlToCrawl.toString() + "\" : \"" + filename + "\"}\n");
+                            jsonOut.write("{\"" + filename + "\" : \"" + urlToCrawl.toString() + "\"}\n");
                         } finally {
                             jsonOut.close();
                         }
