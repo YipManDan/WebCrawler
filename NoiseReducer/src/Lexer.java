@@ -18,6 +18,7 @@ public final class Lexer {
     static public List<LexTuple> lexFile(File targetFile) throws IOException {
         List<LexTuple> lexTuples = new ArrayList<LexTuple>();
         List<String> disallowedTags = new ArrayList<String>();
+        Map<String, Integer> disallowedTagsSeen = new HashMap<String, Integer>();
 
         loadDisallowedTags(disallowedTags);
 
@@ -81,6 +82,48 @@ public final class Lexer {
                     token += currentChar;
 
                     // Handle disallowed tags logic here.
+                    if (token.startsWith("</")){
+                        // Logic for tag ending
+                        String stripped = token.substring(2);
+                        // Check to see if it is in the disallowed list.
+                        for (String seenDisallowed : disallowedTagsSeen.keySet()) {
+                            if (stripped.startsWith(seenDisallowed)) {
+                                System.out.println(token);
+
+                                // Reduce the tag's value by 1 unless it is 1, in which case remove.
+                                Integer cnt = disallowedTagsSeen.get(seenDisallowed);
+                                if (cnt == 1)
+                                    disallowedTagsSeen.remove(seenDisallowed);
+                                else
+                                    disallowedTagsSeen.put(seenDisallowed, cnt - 1);
+
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // Logic for tag start.
+                        String stripped = token.substring(1);
+                        boolean match = false;
+                        for (String disallowed : disallowedTags) {
+                            if (stripped.startsWith(disallowed)) {
+                                match = true;
+                                System.out.println(token);
+
+                                // Increase the tag's value by 1 if there, else add it with value 1.
+                                if (disallowedTagsSeen.keySet().contains(disallowed)) {
+                                    Integer cnt = disallowedTagsSeen.get(disallowed);
+                                    disallowedTagsSeen.put(disallowed, cnt + 1);
+                                }
+                                else
+                                {
+                                    disallowedTagsSeen.put(disallowed, 1);
+                                }
+                            }
+                        }
+                    }
+
 
                     lexTuples.add(new LexTuple(token,counter,1));
                     token = "";
