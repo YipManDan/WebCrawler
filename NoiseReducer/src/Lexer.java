@@ -92,7 +92,7 @@ public final class Lexer {
                         // Check to see if it is in the disallowed list.
                         for (String seenDisallowed : disallowedTagsSeen.keySet()) {
                             if (stripped.startsWith(seenDisallowed)) {
-                                System.out.println(token);
+//                                System.out.println(token);
 
                                 // Reduce the tag's value by 1 unless it is 1, in which case remove.
                                 Integer cnt = disallowedTagsSeen.get(seenDisallowed);
@@ -112,7 +112,7 @@ public final class Lexer {
                         for (String disallowed : disallowedTags) {
                             if (stripped.startsWith(disallowed)) {
                                 match = true;
-                                System.out.println(token);
+//                                System.out.println(token);
 
                                 // Increase the tag's value by 1 if there, else add it with value 1.
                                 if (disallowedTagsSeen.keySet().contains(disallowed)) {
