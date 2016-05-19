@@ -23,7 +23,7 @@ public class NR_FileInterface extends JFrame implements ActionListener, WindowLi
 
     private SpinnerNumberModel spinnerNumberModel;
     private JSpinner numberOfRunnerField;
-    private int numberOfRunners = 100;
+    private int numberOfRunners = 1000;
 
     /**
      * A constructor for the FileInterface class.
@@ -53,7 +53,7 @@ public class NR_FileInterface extends JFrame implements ActionListener, WindowLi
         north.add(outputPath);
 
         numberPanel = new JPanel();
-        spinnerNumberModel = new SpinnerNumberModel(numberOfRunners, 1, 500, 1);
+        spinnerNumberModel = new SpinnerNumberModel(numberOfRunners, 1, 1000, 1);
         numberOfRunnerField = new JSpinner(spinnerNumberModel);
         numberPanel.add(new JLabel("Select a number of threads: "));
         numberPanel.add(numberOfRunnerField);
