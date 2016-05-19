@@ -37,6 +37,7 @@ public final class Lexer {
             prevChar = currentChar;
             currentChar = (char) inputStream.read();
 
+            // Logic for encountering a white space character.
             if (Character.isWhitespace(currentChar)) {
                 if (!readingTag) {
                     if (!token.equals("")) {
@@ -47,17 +48,18 @@ public final class Lexer {
                             token = token.replace("^", "");
                         }
                         if (!token.equals("")) {
-                            lexTuples.add(new LexTuple(token,counter,0));
-                            token = "";
+                            if (disallowedTagsSeen.isEmpty()) lexTuples.add(new LexTuple(token,counter,0));
                         }
-                        counter++;
+                        if (disallowedTagsSeen.isEmpty()) counter++;
+                        token = "";
                     }
 
                     // Add white space tokens.
-                    if (wantWhiteSpaceTokens)
+                    if (wantWhiteSpaceTokens && disallowedTagsSeen.isEmpty())
                         lexTuples.add(new LexTuple(""+currentChar,counter++,0));
                 }
             }
+            // Logic for encountering the start of a tag.
             else {
                 // Start a tag
                 if (currentChar == '<' && prevChar != '\\') {
@@ -69,21 +71,23 @@ public final class Lexer {
                             token = token.replace("^", "");
                         }
                         if (token.equals("")) {
-                            lexTuples.add(new LexTuple(token,counter,0));
+                            if (disallowedTagsSeen.isEmpty()) lexTuples.add(new LexTuple(token,counter,0));
                             token = "";
                         }
-                        counter++;
+                        if (disallowedTagsSeen.isEmpty()) counter++;
                     }
                     readingTag = true;
                 }
-                // End a tag.
+                // Logic for encountering the end of a tag.
                 else if (readingTag && currentChar == '>' && prevChar !='\\') {
+                    boolean wasEmpty = disallowedTagsSeen.isEmpty();
                     readingTag = false;
                     token += currentChar;
 
-                    // Handle disallowed tags logic here.
+                    // --- The following if-else handles disallowed tags. ---
+
+                    // Logic for encountering a closing tag.
                     if (token.startsWith("</")){
-                        // Logic for tag ending
                         String stripped = token.substring(2);
                         // Check to see if it is in the disallowed list.
                         for (String seenDisallowed : disallowedTagsSeen.keySet()) {
@@ -96,14 +100,13 @@ public final class Lexer {
                                     disallowedTagsSeen.remove(seenDisallowed);
                                 else
                                     disallowedTagsSeen.put(seenDisallowed, cnt - 1);
-
                                 break;
                             }
                         }
                     }
+                    // Logic for encountering an opening tag.
                     else
                     {
-                        // Logic for tag start.
                         String stripped = token.substring(1);
                         boolean match = false;
                         for (String disallowed : disallowedTags) {
@@ -124,10 +127,13 @@ public final class Lexer {
                         }
                     }
 
+                    // Add the tag if you're not inside a disallowed tag.
+                    if (wasEmpty && disallowedTagsSeen.isEmpty()){
+                        lexTuples.add(new LexTuple(token,counter,1));
+                        counter++;
+                    }
 
-                    lexTuples.add(new LexTuple(token,counter,1));
                     token = "";
-                    counter++;
                     continue;
                 }
                 token += currentChar;
