@@ -36,15 +36,15 @@ public final class Lexer {
             currentChar = (char) inputStream.read();
 
             if (Character.isWhitespace(currentChar)) {
-                if (!readingTag && token != "") {
+                if (!readingTag) {
                     token = token.replaceAll("[^a-zA-z0-9]","");
                     token = token.replace("[","");
-                    token = token.replace("]","");
                     token = token.replace("^","");
                     if (token != "") {
-                        lexTuples.add(new LexTuple(token,counter,0));
+                        lexTuples.add(new LexTuple(token,counter++,0));
                         token = "";
                     }
+                    lexTuples.add(new LexTuple(""+currentChar,counter,0)); // Add white space tokens.
                     counter++;
                 }
             }

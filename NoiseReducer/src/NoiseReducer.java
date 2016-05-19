@@ -103,15 +103,21 @@ public class NoiseReducer {
                 try {
                     lexTuples = Lexer.lexFile(file);
 
-                    // Run analysis on lexTupleList.
-                    ContentFinder contentFinder = new ContentFinder(lexTuples);
-
                     if (lexTuples != null) {
                         boolean firstLine = true;
                         BufferedWriter outputWriter;
 
+                        int low = 0;
+                        int high = lexTuples.size()-1;
+
+                        // Run analysis on lexTupleList.
+//                        ContentFinder contentFinder = new ContentFinder(lexTuples);
+//                        low = contentFinder.lowPosition;
+//                        high = contentFinder.highPosition;
+
+
                         outputWriter = new BufferedWriter(new FileWriter(outputPath + file.getName()));
-                        for (int i = contentFinder.lowPosition; i <= contentFinder.highPosition; i++){
+                        for (int i = low; i <= high; i++){
                             LexTuple lexTuple = lexTuples.get(i);
                             if (lexTuple.getBit() != 1) {
                                 if (firstLine)
