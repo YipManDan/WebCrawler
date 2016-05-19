@@ -14,6 +14,7 @@ public class NoiseReducer {
     protected int numThreads;
     protected File[] inDirectoryListing;
     private List<NoiseReducerRunner> runners;
+    private boolean wantTags = true;            // Set this for whether you want tags or not.
 
     NR_FileInterface fileInterface;
 
@@ -109,21 +110,23 @@ public class NoiseReducer {
 
                         int low = 0;
                         int high = lexTuples.size()-1;
+                        String separator = "";
 
                         // Run analysis on lexTupleList.
 //                        ContentFinder contentFinder = new ContentFinder(lexTuples);
 //                        low = contentFinder.lowPosition;
 //                        high = contentFinder.highPosition;
-
+//                        separator = "\n";
 
                         outputWriter = new BufferedWriter(new FileWriter(outputPath + file.getName()));
                         for (int i = low; i <= high; i++){
                             LexTuple lexTuple = lexTuples.get(i);
-                            if (lexTuple.getBit() != 1) {
+                            // Write either everything if you want tags, or just non-tags if you don't.
+                            if (wantTags || lexTuple.getBit() != 1) {
                                 if (firstLine)
                                     firstLine = false;
-                                else
-                                    outputWriter.write("\n");
+                                else if (!separator.equals(""))
+                                    outputWriter.write(separator);
 
                                 outputWriter.write(lexTuple.getToken().toLowerCase());
                             }
