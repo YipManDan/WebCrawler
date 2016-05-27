@@ -132,7 +132,7 @@ public class Crawler {
                 }
 
                 //Create a reference to a RobotsChecker class which handles download and storage of robots.txt restrictions
-                RobotsChecker robotsChecker;
+                RobotsChecker robotsChecker = null;
 
                 // Check if we have already got this robot
                 if (robots.containsKey(urlToCrawl.getHost())) {
@@ -188,7 +188,7 @@ public class Crawler {
                 removerTask.setHostToRemove(urlToCrawl.getHost());
 
                 //Check if the host's robot.txt page specifies a crawl-delay
-                if (robotsChecker.crawlDelay == -1)
+                if (robotsChecker == null || robotsChecker.crawlDelay == -1)
                     t.schedule(removerTask, defaultCrawlDelay);
                 else {
                     t.schedule(removerTask, robotsChecker.crawlDelay * 1000);
@@ -205,8 +205,8 @@ public class Crawler {
                     String contentType = response.contentType();
 
                     //Checks content type and only continues with text/html
-                    if(!contentType.contains("text/html")) {
-                        System.out.println("Page downloaded was not of content type: text/html");
+                    if(!(contentType.contains("text/html") || contentType.contains("text/xml"))) {
+                        System.out.println("Page downloaded was not of content type: text/html or xml");
                         numPagesCrawled.decrement();
                         continue;
                     }
@@ -260,6 +260,8 @@ public class Crawler {
                         else {
                             finalLinkString = urlToCrawl.getProtocol() + "://" + urlToCrawl.getHost() + linkString;
                         }
+
+//                        System.out.println("Link: "+ finalLinkString);
 
                         //Add valid links to queue of URLs to crawl
                         try {
