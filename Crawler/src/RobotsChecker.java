@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
@@ -45,16 +46,17 @@ public class RobotsChecker {
 
         // Generate the URL of the robots.txt file
         System.out.println(url.getProtocol());
-        String robotURL = url.getProtocol()+"://" + url.getHost() + "/robots.txt";
+        String robotURLString = url.getProtocol()+"://" + url.getHost() + "/robots.txt";
 
         // Create a bufferedReader to download the robots.txt file
         try{
-            System.out.println("Accessing: " + robotURL);
-            inputStream = (new URL(robotURL)).openStream();
+            System.out.println("Accessing: " + robotURLString);
+            inputStream = (new URL(robotURLString)).openStream();
             bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
         }
-        catch (Exception e){
-            System.err.println("Exception at Robots.txt: " + e);
+        catch (IOException e){
+            System.err.println("IOException in Robots.txt: " + e);
+            e.printStackTrace();
             return;
         }
 
@@ -99,7 +101,7 @@ public class RobotsChecker {
                     // If the line lists a URL path to disallow, then add to disallow list
                     else if (parsedLine[0].toLowerCase().startsWith("disallow")) {
                         disallowedURL = prepareURL(parsedLine[1]);
-                        disallowedURLs.add(new URL("http://" + url.getHost() + disallowedURL));
+                        disallowedURLs.add(new URL(url.getProtocol()+"://" + url.getHost() + disallowedURL));
 
                     }
                 }
