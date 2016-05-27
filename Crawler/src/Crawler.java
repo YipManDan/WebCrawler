@@ -318,11 +318,8 @@ public class Crawler {
                     // Record the URL - filename pair to the JSON file.
                     synchronized (JSONPath) {
                         Writer jsonOut = new BufferedWriter(new FileWriter(JSONPath, true));
-                        try {
-                            jsonOut.write("{\"Filename\": \"" + filename + "\", \"URL\": \"" + urlToCrawl.toString() + "\"},\n");
-                        } finally {
-                            jsonOut.close();
-                        }
+                        jsonOut.write("{\"Filename\": \"" + filename + "\", \"URL\": \"" + urlToCrawl.toString() + "\"},\n");
+                        jsonOut.close();
                     }
                 }
                 catch (IOException e){
@@ -433,6 +430,20 @@ public class Crawler {
             System.err.println("IOException creating bufferedWriter" + e.getMessage());
         }
 
+        //Create JSOn File:
+        // Record the URL - filename pair to the JSON file.
+        try {
+            synchronized (JSONPath) {
+                Writer jsonOut = new BufferedWriter(new FileWriter(JSONPath));
+                jsonOut.write("[");
+                jsonOut.close();
+            }
+        }
+        catch (IOException e){
+            System.err.println("IOException creating bufferedWriter" + e.getMessage());
+        }
+
+
         spiders = new ArrayList<Spider>();
         // Create Spiders.
         for (int i = 0; i < numberOfSpiders; i++) {
@@ -480,6 +491,20 @@ public class Crawler {
         }
         catch (IOException e){
             System.err.println("IOException at end of html file: " + e.getMessage());
+        }
+
+        //End JSON File:
+        // Record the URL - filename pair to the JSON file.
+        try {
+            synchronized (JSONPath) {
+                Writer jsonOut = new BufferedWriter(new FileWriter(JSONPath, true));
+                jsonOut.write("]");
+                System.out.println("Reminder, you will need to delete the last comma.");
+                jsonOut.close();
+            }
+        }
+        catch (IOException e){
+            System.err.println("IOException creating bufferedWriter" + e.getMessage());
         }
 
         // End code execution here.

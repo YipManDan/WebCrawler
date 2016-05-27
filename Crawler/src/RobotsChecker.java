@@ -44,7 +44,8 @@ public class RobotsChecker {
         disallowedURLs = new ArrayList<URL>();
 
         // Generate the URL of the robots.txt file
-        String robotURL = "http://" + url.getHost() + "/robots.txt";
+        System.out.println(url.getProtocol());
+        String robotURL = url.getProtocol()+"://" + url.getHost() + "/robots.txt";
 
         // Create a bufferedReader to download the robots.txt file
         try{
