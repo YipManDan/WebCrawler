@@ -55,7 +55,7 @@ public class RobotsChecker {
             bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
         }
         catch (IOException e){
-            System.err.println("IOException in Robots.txt: " + e);
+            System.err.println("IOException in Robots.txt grabbing: " + robotURLString);
             e.printStackTrace();
             return;
         }
