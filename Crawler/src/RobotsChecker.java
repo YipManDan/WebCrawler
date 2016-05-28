@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,11 +52,13 @@ public class RobotsChecker {
         // Create a bufferedReader to download the robots.txt file
         try{
             System.out.println("Accessing: " + robotURLString);
-            inputStream = (new URL(robotURLString)).openStream();
+            URLConnection urlConnection = new URL(robotURLString).openConnection();
+            urlConnection.addRequestProperty("User-Agent", "Mozilla/5.0");
+            inputStream = urlConnection.getInputStream();
             bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
         }
         catch (IOException e){
-            System.err.println("IOException in Robots.txt grabbing: " + robotURLString);
+//            System.err.println("IOException in Robots.txt grabbing: " + robotURLString);
             e.printStackTrace();
             return;
         }
